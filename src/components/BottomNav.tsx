@@ -18,8 +18,8 @@ export default function BottomNav({ active, onChange }: { active: TabId; onChang
       position: 'fixed', bottom: 0, left: 0, right: 0,
       background: 'var(--bg-nav)', borderTop: '1px solid var(--border)',
       display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      padding: '2px 0 env(safe-area-inset-bottom, 4px)',
-      zIndex: 50, boxShadow: '0 -2px 12px rgba(0,0,0,0.06)',
+      padding: '4px 0 env(safe-area-inset-bottom, 4px)',
+      zIndex: 50,
     }}>
       {tabs.map(tab => {
         const isActive = active === tab.id;
@@ -28,18 +28,16 @@ export default function BottomNav({ active, onChange }: { active: TabId; onChang
             key={tab.id}
             onClick={() => onChange(tab.id)}
             style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px',
               background: 'none', border: 'none', cursor: 'pointer',
-              padding: '4px 6px', borderRadius: '10px',
+              padding: '4px 4px 2px',
               color: isActive ? 'var(--primary)' : 'var(--text-muted)',
-              transition: 'all 0.2s',
-              ...(isActive ? { background: 'var(--primary-light)' } : {}),
             }}
           >
-            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth={isActive ? 2.2 : 1.6} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth={isActive ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
               <path d={tab.icon} />
             </svg>
-            <span style={{ fontSize: '8px', fontWeight: isActive ? 700 : 400, lineHeight: 1.2 }}>{tab.label}</span>
+            <span style={{ fontSize: '8px', fontWeight: isActive ? 700 : 400, lineHeight: 1 }}>{tab.label}</span>
           </button>
         );
       })}
