@@ -1,47 +1,158 @@
 import { Tenant, Payment } from './types';
 import { getApartments, getTenants, getExpenses } from './store';
 
+function amountToArabicWords(amount: number): string {
+  const ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
+  const teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
+  const tens = ['', 'عشرة', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+  const hundreds = ['', 'مائة', 'مائتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+
+  const dinar = Math.floor(amount);
+  const fils = Math.round((amount - dinar) * 1000);
+
+  if (dinar === 0) return 'صفر دينار كويتي فقط لاغير';
+
+  const parts: string[] = [];
+
+  if (dinar >= 1000) {
+    const th = Math.floor(dinar / 1000);
+    if (th === 1) parts.push('ألف');
+    else if (th === 2) parts.push('ألفان');
+    else if (th <= 10) parts.push(ones[th] + ' آلاف');
+    const rem = dinar % 1000;
+    if (rem > 0) {
+      parts.push('و');
+      return parts.join(' ') + ' ' + amountWordsPart(rem, hundreds, ones, teens, tens) + ' دينار كويتي فقط لاغير';
+    }
+    return parts.join(' ') + ' دينار كويتي فقط لاغير';
+  }
+
+  return amountWordsPart(dinar, hundreds, ones, teens, tens) + ' دينار كويتي فقط لاغير';
+}
+
+function amountWordsPart(n: number, hundreds: string[], ones: string[], teens: string[], tens: string[]): string {
+  const parts: string[] = [];
+  const h = Math.floor(n / 100);
+  if (h > 0) parts.push(hundreds[h]);
+  const remainder = n % 100;
+  if (remainder > 0) {
+    if (parts.length > 0) parts.push('و');
+    if (remainder < 10) {
+      parts.push(ones[remainder]);
+    } else if (remainder >= 10 && remainder < 20) {
+      parts.push(teens[remainder - 10]);
+    } else {
+      const t = Math.floor(remainder / 10);
+      const o = remainder % 10;
+      if (o > 0) {
+        parts.push(ones[o] + ' و' + tens[t]);
+      } else {
+        parts.push(tens[t]);
+      }
+    }
+  }
+  return parts.join(' ');
+}
+
 export function printReceipt(tenant: Tenant, payment: Payment) {
   const apt = getApartments().find(a => a.id === tenant.apartmentId);
-  const w = window.open('', '_blank', 'width=400,height=600');
+  const amountWords = amountToArabicWords(payment.amount);
+  const dinar = Math.floor(payment.amount);
+  const fils = Math.round((payment.amount - dinar) * 1000);
+  const isCash = payment.method === 'نقدا';
+
+  const w = window.open('', '_blank', 'width=750,height=600');
   if (!w) return;
   w.document.write(`<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8">
-<title>وصل إيجار - ${tenant.name}</title>
+<title>وصل ايجار - ${tenant.name}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Traditional Arabic', 'Simplified Arabic', -apple-system, 'Segoe UI', Arial, sans-serif; padding: 24px; color: #000; direction: rtl; max-width: 400px; margin: 0 auto; }
-  .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 16px; }
-  .header h1 { font-size: 20px; margin-bottom: 4px; }
-  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dotted #999; font-size: 14px; }
-  .amount { text-align: center; margin: 16px 0; padding: 12px; border: 2px solid #000; }
-  .amount .num { font-size: 28px; font-weight: 700; }
-  .sig { display: flex; justify-content: space-between; margin-top: 40px; }
-  .sig div { text-align: center; width: 40%; }
-  .sig .line { border-top: 1px solid #000; margin-top: 40px; padding-top: 4px; font-size: 12px; }
-  @media print { body { padding: 16px; } @page { size: A4; margin: 15mm; } }
+  body { font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif; padding: 30px; color: #000; direction: rtl; max-width: 750px; margin: 0 auto; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; }
+  td, th { border: 1.5px solid #000; padding: 6px 10px; vertical-align: middle; }
+  .header-table td { border: none; padding: 4px 8px; }
+  .lbl { font-weight: 700; white-space: nowrap; width: 1%; }
+  .val { min-width: 80px; }
+  .amount-box { border: 2px solid #000; padding: 4px 12px; display: inline-block; min-width: 60px; text-align: center; font-weight: 700; font-size: 16px; }
+  @media print { body { padding: 20px; } @page { size: A4; margin: 15mm; } }
 </style></head><body>
-<div class="header">
-  <div style="font-size:12px">شركة جوهرة السلمان العقارية</div>
-  <h1>عمارة زمزم</h1>
-  <div style="font-size:14px;font-weight:700;margin-top:8px">وصل استلام إيجار</div>
-</div>
 
-<div class="row"><span>رقم الوصل</span><span>${payment.id.slice(-8).toUpperCase()}</span></div>
-<div class="row"><span>التاريخ</span><span>${payment.date}</span></div>
-<div class="row"><span>اسم المستأجر</span><span>${tenant.name}</span></div>
-<div class="row"><span>الشقة / الدور</span><span>${apt?.number || '-'} / ${tenant.floor}</span></div>
-<div class="row"><span>عن شهر</span><span>${payment.month} ${payment.year}</span></div>
-<div class="row"><span>طريقة الدفع</span><span>${payment.method}</span></div>
-${payment.notes ? `<div class="row"><span>ملاحظات</span><span>${payment.notes}</span></div>` : ''}
+<!-- Header -->
+<table class="header-table" style="margin-bottom:12px;width:100%">
+  <tr>
+    <td style="text-align:right;width:35%;font-size:13px;line-height:1.6">
+      <div style="font-weight:700;font-size:15px">شركة جوهرة السلمان العقارية</div>
+      <div>عقار / رضا و عباس السلمان</div>
+    </td>
+    <td style="text-align:center;width:30%">
+      <div style="font-weight:700;font-size:20px;color:#c00">وصل ايجار</div>
+      <div style="font-size:13px">Rent Voucher</div>
+    </td>
+    <td style="text-align:left;width:35%;font-size:12px;line-height:1.6">
+      <div style="font-weight:700;font-size:13px">Jawhart Al-Salman Real Estate Company</div>
+      <div>Real Estate / Redha, Abbas AlSalman</div>
+    </td>
+  </tr>
+</table>
 
-<div class="amount">
-  <div class="num">${payment.amount}</div>
-  <div>دينار كويتي</div>
-</div>
+<!-- Date and Amount boxes -->
+<table class="header-table" style="margin-bottom:12px;width:100%">
+  <tr>
+    <td style="text-align:right;width:50%">
+      <span class="amount-box" style="margin-left:4px">${fils || ''}</span>
+      <span style="font-weight:700;margin:0 4px">فلس</span>
+      <span class="amount-box" style="margin-left:4px">${dinar}</span>
+      <span style="font-weight:700;margin:0 4px">دينار</span>
+    </td>
+    <td style="text-align:left;width:50%">
+      <span style="font-weight:700;font-size:15px">${payment.date}</span>
+      <span style="font-weight:700;margin-right:8px;border:2px solid #000;padding:3px 10px">التاريخ</span>
+    </td>
+  </tr>
+</table>
 
-<div class="sig">
-  <div><div class="line">توقيع المستلم</div></div>
-  <div><div class="line">توقيع المستأجر</div></div>
+<!-- Main form table -->
+<table>
+  <tr>
+    <td class="lbl" style="text-align:left;font-size:11px">Received From</td>
+    <td class="val" style="font-weight:700;font-size:15px">${tenant.name}</td>
+    <td class="lbl">وصلنا من السيد / السادة</td>
+  </tr>
+  <tr>
+    <td class="lbl" style="text-align:left;font-size:11px">The Sum of K.D</td>
+    <td class="val">${amountWords}</td>
+    <td class="lbl">مبلغ وقدره</td>
+  </tr>
+  <tr>
+    <td class="lbl" style="text-align:left;font-size:11px">Bank</td>
+    <td style="padding:0">
+      <table style="width:100%;border:none">
+        <tr>
+          <td style="border:none;border-left:1.5px solid #000;width:50%">${!isCash ? (payment.notes || '') : ''}</td>
+          <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:11px">على بنك</td>
+          <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:11px">Cash / Cheque No</td>
+          <td style="border:none;width:20%;text-align:center;font-weight:700">${isCash ? 'نقدا' : payment.method}</td>
+        </tr>
+      </table>
+    </td>
+    <td class="lbl">نقدا / شيك رقم</td>
+  </tr>
+  <tr>
+    <td class="lbl" style="text-align:left;font-size:11px">Of Rent</td>
+    <td class="val" style="font-weight:700;font-size:15px">${apt?.number || '-'}</td>
+    <td class="lbl">وذلك عن ايجار</td>
+  </tr>
+  <tr>
+    <td class="lbl" style="text-align:left;font-size:11px">Month Of</td>
+    <td class="val" style="font-weight:700">${payment.month} ${payment.year}</td>
+    <td class="lbl">عن شهر</td>
+  </tr>
+</table>
+
+<!-- Signature -->
+<div style="margin-top:30px;text-align:right;padding-right:40px">
+  <div style="font-weight:700;font-size:15px">توقيع المستلم</div>
+  <div style="margin-top:6px;font-size:16px;letter-spacing:3px">..............................</div>
 </div>
 
 <script>setTimeout(()=>window.print(),500)</script>
