@@ -100,7 +100,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (tab: TabId) => 
         {/* Quick Actions */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '14px' }}>
           <ActionBtn label="مستأجر جديد" labelEn="New Tenant" icon="+" color="var(--primary)" onClick={() => onNavigate('tenants')} />
-          <ActionBtn label="تسجيل دفعة" labelEn="Add Payment" icon="💰" color="var(--success)" onClick={() => onNavigate('payments')} />
+          <ActionBtn label="وصل إيجار" labelEn="Receipt" icon="💰" color="var(--success)" onClick={() => onNavigate('payments')} />
           <ActionBtn label="عرض العقود" labelEn="Contracts" icon="📄" color="var(--accent)" onClick={() => onNavigate('contracts')} />
         </div>
 

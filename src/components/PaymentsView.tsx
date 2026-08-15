@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Payment, Tenant } from '@/lib/types';
-import { getPayments, addPayment, getTenants, generateId, getApartments } from '@/lib/store';
+import { getPayments, addPayment, deletePayment, getTenants, generateId, getApartments } from '@/lib/store';
 import { printReceipt, printMonthlyStatement } from '@/lib/pdf';
 
 const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
@@ -43,7 +43,7 @@ export default function PaymentsView() {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <div>
-            <div style={{ fontSize: '20px', fontWeight: 700 }}>الدفعات / Payments</div>
+            <div style={{ fontSize: '20px', fontWeight: 700 }}>وصولات الإيجار / Receipts</div>
             <div style={{ fontSize: '12px', opacity: 0.8 }}>{months[selectedMonth]} {selectedYear}</div>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -57,7 +57,7 @@ export default function PaymentsView() {
               background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)',
               borderRadius: '10px', padding: '8px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
             }}>
-              + دفعة
+              + وصل
             </button>
           </div>
         </div>
@@ -145,6 +145,10 @@ export default function PaymentsView() {
                         padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--primary)',
                       }}>🖨️</button>
                     )}
+                    <button onClick={() => { if (confirm('حذف هذا الوصل؟')) { deletePayment(p.id); reload(); } }} style={{
+                      background: 'var(--danger-light)', border: 'none', borderRadius: '6px',
+                      padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)',
+                    }}>🗑️</button>
                   </div>
                 </div>
               );
@@ -236,7 +240,7 @@ function PaymentForm({ tenants, onSave, onCancel }: { tenants: Tenant[]; onSave:
       }}>
         <div style={{ width: '40px', height: '4px', background: 'var(--border)', borderRadius: '2px', margin: '0 auto 16px' }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>تسجيل دفعة / Record Payment</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>وصل إيجار / Rent Receipt</h2>
           <button onClick={onCancel} style={{ background: 'var(--bg)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', fontSize: '18px', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
         </div>
 

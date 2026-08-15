@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Tenant } from '@/lib/types';
-import { getTenants, addTenant, updateTenant, deleteTenant, getApartments } from '@/lib/store';
+import { Tenant, Eviction } from '@/lib/types';
+import { getTenants, addTenant, updateTenant, deleteTenant, getApartments, addEviction, generateId } from '@/lib/store';
 import { printContract, printEvictionNotice } from '@/lib/pdf';
 import TenantForm from './TenantForm';
 
@@ -12,6 +12,7 @@ export default function TenantsView() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Tenant | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [evictingTenant, setEvictingTenant] = useState<Tenant | null>(null);
 
   const reload = useCallback(() => setTenants(getTenants()), []);
   useEffect(() => { reload(); }, [reload]);
@@ -127,7 +128,7 @@ export default function TenantsView() {
                       <ActionBtn label="اتصال / Call" color="var(--success)" bg="var(--success-light)" onClick={() => window.open(`tel:${t.phone}`, '_self')} />
                     )}
                     <ActionBtn label="طباعة عقد / Print Contract" color="var(--accent)" bg="var(--accent-light)" onClick={() => printContract(t)} />
-                    <ActionBtn label="إشعار إخلاء / Eviction" color="var(--danger)" bg="var(--danger-light)" onClick={() => printEvictionNotice(t)} />
+                    <ActionBtn label="تسجيل إخلاء / Eviction" color="var(--danger)" bg="var(--danger-light)" onClick={() => setEvictingTenant(t)} />
                   </div>
                 </div>
               )}
@@ -148,6 +149,31 @@ export default function TenantsView() {
           tenant={editing}
           onSave={handleSave}
           onCancel={() => { setShowForm(false); setEditing(null); }}
+        />
+      )}
+
+      {evictingTenant && (
+        <EvictionModal
+          tenant={evictingTenant}
+          onConfirm={(reason, notes) => {
+            const apt = apartments.find(a => a.id === evictingTenant.apartmentId);
+            const eviction: Eviction = {
+              id: generateId(),
+              tenantId: evictingTenant.id,
+              tenantName: evictingTenant.name,
+              apartmentId: evictingTenant.apartmentId,
+              apartmentNumber: apt?.number || '',
+              floor: evictingTenant.floor,
+              reason,
+              date: new Date().toISOString().split('T')[0],
+              notes,
+            };
+            addEviction(eviction);
+            printEvictionNotice(evictingTenant);
+            setEvictingTenant(null);
+            reload();
+          }}
+          onCancel={() => setEvictingTenant(null)}
         />
       )}
     </div>
@@ -172,5 +198,65 @@ function ActionBtn({ label, color, bg, onClick }: { label: string; color: string
     }}>
       {label}
     </button>
+  );
+}
+
+function EvictionModal({ tenant, onConfirm, onCancel }: {
+  tenant: Tenant;
+  onConfirm: (reason: string, notes: string) => void;
+  onCancel: () => void;
+}) {
+  const [reason, setReason] = useState('');
+  const [notes, setNotes] = useState('');
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '11px 14px', borderRadius: '10px',
+    border: '1px solid var(--border)', background: 'var(--bg)',
+    color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+  };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 100,
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      backdropFilter: 'blur(4px)',
+    }} onClick={onCancel}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: 'var(--bg-card)', borderRadius: '24px 24px 0 0', width: '100%',
+        maxWidth: '500px', padding: '24px 20px',
+      }}>
+        <div style={{ width: '40px', height: '4px', background: 'var(--border)', borderRadius: '2px', margin: '0 auto 16px' }} />
+        <h2 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 8px', color: 'var(--danger)' }}>تسجيل إخلاء / Register Eviction</h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+          سيتم تسجيل إخلاء <strong>{tenant.name}</strong> وتحديث حالة الشقة إلى شاغرة. السجلات السابقة لن تُحذف.
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px', display: 'block' }}>سبب الإخلاء / Reason *</label>
+            <input style={inputStyle} value={reason} onChange={e => setReason(e.target.value)} required placeholder="سبب الإخلاء..." />
+          </div>
+          <div>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px', display: 'block' }}>ملاحظات / Notes</label>
+            <textarea style={{ ...inputStyle, minHeight: '60px', resize: 'vertical' }} value={notes} onChange={e => setNotes(e.target.value)} />
+          </div>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+            <button
+              onClick={() => { if (reason.trim()) onConfirm(reason, notes); }}
+              style={{
+                flex: 1, padding: '13px', borderRadius: '12px', border: 'none',
+                background: 'linear-gradient(135deg, #dc3545, #c82333)', color: '#fff',
+                fontSize: '15px', fontWeight: 600, cursor: 'pointer',
+                opacity: reason.trim() ? 1 : 0.5,
+              }}
+            >تأكيد الإخلاء / Confirm</button>
+            <button onClick={onCancel} style={{
+              padding: '13px 24px', borderRadius: '12px', border: '1px solid var(--border)',
+              background: 'var(--bg)', color: 'var(--text)', fontSize: '15px', cursor: 'pointer',
+            }}>إلغاء</button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
