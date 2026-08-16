@@ -17,9 +17,10 @@ export default function BottomNav({ active, onChange }: { active: TabId; onChang
     <nav className="no-print" style={{
       position: 'fixed', bottom: 0, left: 0, right: 0,
       background: 'var(--bg-nav)', borderTop: '1px solid var(--border)',
-      display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-      padding: '4px 0 env(safe-area-inset-bottom, 4px)',
+      display: 'flex', justifyContent: 'space-around', alignItems: 'stretch',
       zIndex: 50,
+      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      boxShadow: '0 -2px 10px rgba(0,0,0,0.08)',
     }}>
       {tabs.map(tab => {
         const isActive = active === tab.id;
@@ -28,16 +29,27 @@ export default function BottomNav({ active, onChange }: { active: TabId; onChang
             key={tab.id}
             onClick={() => onChange(tab.id)}
             style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: '2px',
               background: 'none', border: 'none', cursor: 'pointer',
-              padding: '4px 4px 2px',
+              padding: '6px 4px 8px',
+              flex: 1,
+              position: 'relative',
               color: isActive ? 'var(--primary)' : 'var(--text-muted)',
+              transition: 'color 0.2s',
             }}
           >
-            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth={isActive ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            {isActive && (
+              <div style={{
+                position: 'absolute', top: 0, left: '25%', right: '25%',
+                height: '2.5px', borderRadius: '0 0 2px 2px',
+                background: 'var(--primary)',
+              }} />
+            )}
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth={isActive ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
               <path d={tab.icon} />
             </svg>
-            <span style={{ fontSize: '8px', fontWeight: isActive ? 700 : 400, lineHeight: 1 }}>{tab.label}</span>
+            <span style={{ fontSize: '9px', fontWeight: isActive ? 700 : 400, lineHeight: 1 }}>{tab.label}</span>
           </button>
         );
       })}

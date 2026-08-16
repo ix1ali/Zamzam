@@ -22,6 +22,10 @@ export default function Home() {
     setMounted(true);
     const saved = getCurrentUser();
     if (saved) setUser(saved);
+    const theme = localStorage.getItem('zamzam_theme');
+    if (theme === 'light' || theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
   }, []);
 
   if (!mounted) {

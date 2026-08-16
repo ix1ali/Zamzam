@@ -544,8 +544,8 @@ export function printFinancialStatement(month: string, year: number) {
 
 <div class="share-box">
   <h3>توزيع الأرباح (50/50)</h3>
-  <div class="share-row"><span>الطرف الأول</span><span style="font-weight:700">${share.toLocaleString()} د.ك</span></div>
-  <div class="share-row"><span>الطرف الثاني</span><span style="font-weight:700">${share.toLocaleString()} د.ك</span></div>
+  <div class="share-row"><span>حصة رضا السلمان</span><span style="font-weight:700">${share.toLocaleString()} د.ك</span></div>
+  <div class="share-row"><span>حصة عباس السلمان</span><span style="font-weight:700">${share.toLocaleString()} د.ك</span></div>
 </div>
 
 <div class="footer">عمارة زمزم — شركة جوهرة السلمان العقارية</div>

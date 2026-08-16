@@ -31,7 +31,10 @@ export default function FinancialView() {
   const totalSalaries = salaryExpenses.reduce((s, e) => s + e.amount, 0);
   const totalExpensesAmount = totalGeneral + totalElectricity + totalSalaries;
   const netProfit = totalRent - totalExpensesAmount;
-  const shareEach = netProfit / 2;
+  const shareReda = netProfit / 2;
+  const shareAbbas = netProfit / 2;
+
+  const expensePct = totalRent > 0 ? Math.round((totalExpensesAmount / totalRent) * 100) : 0;
 
   const selectStyle: React.CSSProperties = {
     padding: '8px 10px', borderRadius: '8px',
@@ -48,12 +51,16 @@ export default function FinancialView() {
         </div>
         <button onClick={() => printFinancialStatement(months[selectedMonth], selectedYear)} style={{
           background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
-          borderRadius: '8px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer',
-        }}>طباعة</button>
+          borderRadius: '8px', padding: '7px 12px', fontSize: '12px', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: '4px',
+        }}>
+          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+          طباعة
+        </button>
       </div>
 
       {/* Month/Year selectors */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
         <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} style={{ ...selectStyle, flex: 1 }}>
           {months.map((m, i) => <option key={i} value={i}>{m}</option>)}
         </select>
@@ -62,31 +69,69 @@ export default function FinancialView() {
         </select>
       </div>
 
-      {/* Summary Card */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '14px', border: '1px solid var(--border)', marginBottom: '12px' }}>
-        <Row label="إجمالي الإيجارات" value={totalRent} color="var(--primary)" />
-        <Row label="المصروفات العامة" value={totalGeneral} color="var(--danger)" minus />
-        <Row label="الكهرباء" value={totalElectricity} color="var(--warning)" minus />
-        <Row label="الرواتب" value={totalSalaries} color="var(--text-muted)" minus />
-        <div style={{ borderTop: '2px solid var(--border)', marginTop: '6px', paddingTop: '6px' }}>
-          <Row label="إجمالي المصروفات" value={totalExpensesAmount} color="var(--danger)" bold />
+      {/* Income */}
+      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>إجمالي الإيجارات</span>
+          <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--success)' }}>{totalRent.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: 400 }}>د.ك</span></span>
         </div>
-        <div style={{ borderTop: '2px solid var(--border)', marginTop: '6px', paddingTop: '6px' }}>
-          <Row label="صافي الربح" value={netProfit} color={netProfit >= 0 ? 'var(--success)' : 'var(--danger)'} bold />
+      </div>
+
+      {/* Expenses Summary */}
+      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>المصروفات</span>
+          <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--danger)' }}>{totalExpensesAmount.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: 400 }}>د.ك</span></span>
         </div>
-        <div style={{ borderTop: '1px dashed var(--border)', marginTop: '6px', paddingTop: '6px' }}>
-          <Row label="حصة الطرف الأول (50%)" value={shareEach} color="var(--primary)" />
-          <Row label="حصة الطرف الثاني (50%)" value={shareEach} color="var(--primary)" />
+        {/* expense bar */}
+        <div style={{ height: '6px', background: 'var(--bg)', borderRadius: '3px', overflow: 'hidden', marginBottom: '10px' }}>
+          <div style={{ height: '100%', width: `${Math.min(expensePct, 100)}%`, borderRadius: '3px', background: expensePct > 80 ? 'var(--danger)' : expensePct > 50 ? 'var(--warning)' : 'var(--success)' }} />
+        </div>
+        <ExpRow label="المصروفات العامة" value={totalGeneral} color="var(--danger)" />
+        <ExpRow label="الكهرباء" value={totalElectricity} color="var(--warning)" />
+        <ExpRow label="الرواتب" value={totalSalaries} color="var(--text-muted)" />
+      </div>
+
+      {/* Net Profit */}
+      <div style={{
+        background: netProfit >= 0 ? 'var(--success-light)' : 'var(--danger-light)',
+        borderRadius: '12px', padding: '14px',
+        border: `1px solid ${netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}`,
+        marginBottom: '10px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '14px', fontWeight: 700 }}>صافي الربح</span>
+          <span style={{ fontSize: '22px', fontWeight: 700, color: netProfit >= 0 ? 'var(--success)' : 'var(--danger)' }}>
+            {netProfit.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: 400 }}>د.ك</span>
+          </span>
+        </div>
+      </div>
+
+      {/* Shares */}
+      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', marginBottom: '14px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>توزيع الأرباح</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+          <div style={{ background: 'var(--bg)', borderRadius: '10px', padding: '12px', textAlign: 'center', borderTop: '3px solid var(--primary)' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--primary)' }}>{shareReda.toLocaleString()}</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>د.ك</div>
+            <div style={{ fontSize: '12px', fontWeight: 600, marginTop: '4px' }}>حصة رضا السلمان</div>
+          </div>
+          <div style={{ background: 'var(--bg)', borderRadius: '10px', padding: '12px', textAlign: 'center', borderTop: '3px solid var(--accent)' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--accent)' }}>{shareAbbas.toLocaleString()}</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>د.ك</div>
+            <div style={{ fontSize: '12px', fontWeight: 600, marginTop: '4px' }}>حصة عباس السلمان</div>
+          </div>
         </div>
       </div>
 
       {/* Add Expense */}
       <button onClick={() => { setEditExpense(null); setShowForm(true); }} style={{
-        width: '100%', padding: '10px', borderRadius: '8px', border: '1px dashed var(--border)',
+        width: '100%', padding: '10px', borderRadius: '10px', border: '1px dashed var(--border)',
         background: 'var(--bg-card)', color: 'var(--primary)', fontSize: '13px', fontWeight: 600,
-        cursor: 'pointer', marginBottom: '12px',
+        cursor: 'pointer', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
       }}>
-        + إضافة مصروف
+        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        إضافة مصروف
       </button>
 
       {/* Expenses Sections */}
@@ -122,13 +167,11 @@ export default function FinancialView() {
   );
 }
 
-function Row({ label, value, color, minus, bold }: { label: string; value: number; color: string; minus?: boolean; bold?: boolean }) {
+function ExpRow({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', fontSize: bold ? '14px' : '13px' }}>
-      <span style={{ fontWeight: bold ? 700 : 400, color: 'var(--text)' }}>{label}</span>
-      <span style={{ fontWeight: bold ? 700 : 600, color }}>
-        {minus && value > 0 ? '- ' : ''}{value.toLocaleString()} د.ك
-      </span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: '13px' }}>
+      <span style={{ color: 'var(--text-secondary)' }}>{label}</span>
+      <span style={{ fontWeight: 600, color }}>{value.toLocaleString()} د.ك</span>
     </div>
   );
 }
@@ -139,7 +182,7 @@ function ExpenseList({ title, items, total, color, onEdit, onDelete }: {
 }) {
   if (items.length === 0) return null;
   return (
-    <div style={{ background: 'var(--bg-card)', borderRadius: '10px', border: '1px solid var(--border)', overflow: 'hidden', marginBottom: '10px' }}>
+    <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden', marginBottom: '10px' }}>
       <div style={{ padding: '10px 14px', fontWeight: 600, fontSize: '13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
         <span>{title}</span>
         <span style={{ color }}>{total.toLocaleString()} د.ك</span>
