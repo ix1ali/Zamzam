@@ -6,6 +6,7 @@ import { getApartments, getTenants, updateApartment, deleteTenant, addTenant, up
 import { printContract, printEvictionNotice, printReceipt } from '@/lib/pdf';
 import { floors } from '@/lib/data';
 import { getLang, t } from '@/lib/i18n';
+import { showToast } from './Toast';
 import TenantForm from './TenantForm';
 
 type SubTab = 'apartments' | 'tenants';
@@ -236,7 +237,7 @@ export default function ApartmentsView() {
           }}
           onDeleteApt={(apt) => {
             const ok = deleteApartment(apt.id);
-            if (!ok) { alert(t('cantDeleteOccupied', lang)); return; }
+            if (!ok) { showToast(t('cantDeleteOccupied', lang), 'error'); return; }
             setEditingApt(null);
             reload();
           }}
@@ -278,9 +279,10 @@ function TenantsSection({ tenants, apartments, lang, reload }: {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm(lang === 'ar' ? 'حذف المستأجر؟' : 'Delete tenant?')) {
+    if (confirm('حذف المستأجر؟')) {
       deleteTenant(id);
       reload();
+      showToast('تم حذف المستأجر');
     }
   };
 
@@ -346,7 +348,10 @@ function TenantsSection({ tenants, apartments, lang, reload }: {
                   <div style={{ padding: '10px 14px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     <Btn label={t('edit', lang)} onClick={() => { setEditing(tt); setShowForm(true); }} />
                     <Btn label={t('printContract', lang)} onClick={() => printContract(tt)} />
-                    {tt.phone && <Btn label={t('whatsapp', lang)} onClick={() => window.open(`https://wa.me/965${tt.phone.replace(/\D/g, '')}`, '_blank')} />}
+                    {tt.phone && <Btn label={t('whatsapp', lang)} onClick={() => {
+                      const msg = encodeURIComponent(`السلام عليكم ${tt.name}،\nنود التواصل معكم بخصوص شقة ${apartments.find(a => a.id === tt.apartmentId)?.number || ''} في عمارة زمزم.\nشكراً لتعاونكم.`);
+                      window.open(`https://wa.me/965${tt.phone.replace(/\D/g, '')}?text=${msg}`, '_blank');
+                    }} />}
                     <Btn label={t('evict', lang)} onClick={() => setEvictingTenant(tt)} color="var(--danger)" />
                     <Btn label={t('delete', lang)} onClick={() => handleDelete(tt.id)} color="var(--danger)" />
                   </div>
@@ -507,12 +512,12 @@ function ApartmentDetail({ apartment, tenant, lang, onSave, onEvict, onDeleteTen
               }} />
               <ActionBtn icon="M12 9v2m0 4h.01M5.07 19H19a2 2 0 001.75-2.97l-7-12a2 2 0 00-3.5 0l-7 12A2 2 0 005.07 19z" label={t('evictionNotice', lang)} color="var(--warning)" onClick={() => printEvictionNotice(tenant)} />
               <ActionBtn icon="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" label={t('evict', lang)} color="var(--danger)" onClick={() => {
-                if (confirm(lang === 'ar' ? `إخلاء ${tenant.name}؟` : `Evict ${tenant.name}?`)) onEvict(apartment, tenant);
+                if (confirm(`إخلاء ${tenant.name}؟`)) onEvict(apartment, tenant);
               }} />
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', marginTop: '6px' }}>
               {tenant.phone && (
-                <a href={`https://wa.me/965${tenant.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{
+                <a href={`https://wa.me/965${tenant.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`السلام عليكم ${tenant.name}،\nنود التواصل معكم بخصوص شقة ${apartment.number} في عمارة زمزم.\nشكراً لتعاونكم.`)}`} target="_blank" rel="noopener noreferrer" style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
                   background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '10px',
                   padding: '10px', color: '#25d366', fontSize: '11px', fontWeight: 600, textDecoration: 'none',
@@ -538,7 +543,7 @@ function ApartmentDetail({ apartment, tenant, lang, onSave, onEvict, onDeleteTen
         {/* Delete tenant */}
         {tenant && (
           <button onClick={() => {
-            if (confirm(lang === 'ar' ? `حذف المستأجر ${tenant.name}؟` : `Delete tenant ${tenant.name}?`)) onDeleteTenant(apartment, tenant);
+            if (confirm(`حذف المستأجر ${tenant.name}؟`)) onDeleteTenant(apartment, tenant);
           }} style={{
             width: '100%', padding: '10px', borderRadius: '8px',
             border: '1px solid var(--danger)', background: 'var(--danger-light)',
@@ -553,7 +558,7 @@ function ApartmentDetail({ apartment, tenant, lang, onSave, onEvict, onDeleteTen
         {/* Delete apartment (vacant only) */}
         {isVacant && (
           <button onClick={() => {
-            if (confirm(lang === 'ar' ? `حذف شقة ${apartment.number}؟` : `Delete apartment ${apartment.number}?`)) onDeleteApt(apartment);
+            if (confirm(`حذف شقة ${apartment.number}؟`)) onDeleteApt(apartment);
           }} style={{
             width: '100%', padding: '10px', borderRadius: '8px',
             border: '1px solid var(--danger)', background: 'transparent',

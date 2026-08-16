@@ -10,6 +10,7 @@ import ApartmentsView from '@/components/ApartmentsView';
 import FinancialView from '@/components/FinancialView';
 import SettingsView from '@/components/SettingsView';
 import LoginScreen from '@/components/LoginScreen';
+import ToastContainer from '@/components/Toast';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -55,6 +56,7 @@ export default function Home() {
         {activeTab === 'settings' && <SettingsView onLogout={() => setUser(null)} />}
       </main>
       <BottomNav active={activeTab} onChange={setActiveTab} />
+      <ToastContainer />
     </>
   );
 }

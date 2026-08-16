@@ -3,8 +3,7 @@ export type Lang = 'en' | 'ar';
 const LANG_KEY = 'zamzam_lang';
 
 export function getLang(): Lang {
-  if (typeof window === 'undefined') return 'en';
-  return (localStorage.getItem(LANG_KEY) as Lang) || 'en';
+  return 'ar';
 }
 
 export function setLangPref(lang: Lang) {

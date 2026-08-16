@@ -63,7 +63,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (tab: TabId) => 
 
   const occupancyPct = apartments.length > 0 ? Math.round((occupied / apartments.length) * 100) : 0;
 
-  const dateLocale = lang === 'ar' ? 'ar-KW' : 'en-US';
+  const dateLocale = 'ar-KW';
 
   return (
     <div style={{ padding: '16px', paddingBottom: '8px' }}>
@@ -77,12 +77,12 @@ export default function Dashboard({ onNavigate }: { onNavigate: (tab: TabId) => 
 
       {/* Top row: Occupancy + Collection donuts */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', textAlign: 'center' }}>
+        <div onClick={() => onNavigate('apartments')} style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', textAlign: 'center', cursor: 'pointer' }}>
           <DonutChart pct={occupancyPct} color="var(--success)" size={80} />
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px' }}>{t('occupancyRate', lang)}</div>
           <div style={{ fontSize: '12px', fontWeight: 600, marginTop: '2px' }}>{occupied}/{apartments.length} {t('apt', lang)}</div>
         </div>
-        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', textAlign: 'center' }}>
+        <div onClick={() => onNavigate('financial')} style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', textAlign: 'center', cursor: 'pointer' }}>
           <DonutChart pct={collectionRate} color="var(--primary)" size={80} />
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px' }}>{t('monthlyCollection', lang)}</div>
           <div style={{ fontSize: '12px', fontWeight: 600, marginTop: '2px' }}>{collectedThisMonth.toLocaleString()} / {totalRent.toLocaleString()}</div>
@@ -91,10 +91,10 @@ export default function Dashboard({ onNavigate }: { onNavigate: (tab: TabId) => 
 
       {/* Mini stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '12px' }}>
-        <MiniStat label={t('occupied', lang)} value={occupied} color="var(--success)" />
-        <MiniStat label={t('vacant', lang)} value={vacant} color="#8b5cf6" />
-        <MiniStat label={t('flagged', lang)} value={flagged} color="var(--danger)" />
-        <MiniStat label={t('tenants', lang)} value={tenants.length} color="var(--primary)" />
+        <MiniStat label={t('occupied', lang)} value={occupied} color="var(--success)" onClick={() => onNavigate('apartments')} />
+        <MiniStat label={t('vacant', lang)} value={vacant} color="#8b5cf6" onClick={() => onNavigate('apartments')} />
+        <MiniStat label={t('flagged', lang)} value={flagged} color="var(--danger)" onClick={() => onNavigate('apartments')} />
+        <MiniStat label={t('tenants', lang)} value={tenants.length} color="var(--primary)" onClick={() => onNavigate('apartments')} />
       </div>
 
       {/* Revenue */}
@@ -230,9 +230,9 @@ function DonutChart({ pct, color, size }: { pct: number; color: string; size: nu
   );
 }
 
-function MiniStat({ label, value, color }: { label: string; value: number; color: string }) {
+function MiniStat({ label, value, color, onClick }: { label: string; value: number; color: string; onClick?: () => void }) {
   return (
-    <div style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '10px 6px', textAlign: 'center', border: '1px solid var(--border)' }}>
+    <div onClick={onClick} style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '10px 6px', textAlign: 'center', border: '1px solid var(--border)', cursor: onClick ? 'pointer' : 'default' }}>
       <div style={{ fontSize: '20px', fontWeight: 700, color }}>{value}</div>
       <div style={{ fontSize: '9px', color: 'var(--text-muted)', marginTop: '2px' }}>{label}</div>
     </div>

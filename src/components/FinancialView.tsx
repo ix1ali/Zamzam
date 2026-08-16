@@ -5,6 +5,7 @@ import { Expense, Payment, Tenant } from '@/lib/types';
 import { getTenants, getExpenses, addExpense, updateExpense, deleteExpense, getPayments, addPayment, deletePayment, getApartments, updateTenant, generateId } from '@/lib/store';
 import { printFinancialStatement, printReceipt, printMonthlyStatement, printContract } from '@/lib/pdf';
 import { getLang, t, getMonths, monthsAr } from '@/lib/i18n';
+import { showToast } from './Toast';
 
 type SubTab = 'statement' | 'receipts' | 'contracts';
 
@@ -297,7 +298,7 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
                       padding: '3px 6px', cursor: 'pointer', fontSize: '11px', color: 'var(--text-muted)',
                     }}>{t('print', lang)}</button>
                   )}
-                  <button onClick={() => { if (confirm(lang === 'ar' ? 'حذف هذا الوصل؟' : 'Delete this receipt?')) { deletePayment(p.id); reload(); } }} style={{
+                  <button onClick={() => { if (confirm('حذف هذا الوصل؟')) { deletePayment(p.id); reload(); showToast('تم حذف الوصل'); } }} style={{
                     background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
                     padding: '3px 6px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)',
                   }}>{t('delete', lang)}</button>
@@ -326,7 +327,7 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ fontWeight: 600, color: 'var(--danger)', fontSize: '13px' }}>{tt.rentAmount} {t('kwd', lang)}</span>
                   {tt.phone && (
-                    <a href={`https://wa.me/965${tt.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={`https://wa.me/965${tt.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`السلام عليكم ${tt.name}،\nهذا تذكير بدفع إيجار شقة ${apt?.number || ''} بمبلغ ${tt.rentAmount} د.ك عن شهر ${months[selectedMonth]} ${selectedYear}.\nشكراً لتعاونكم.`)}`} target="_blank" rel="noopener noreferrer" style={{
                       background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
                       padding: '3px 6px', fontSize: '11px', color: 'var(--success)', textDecoration: 'none',
                     }}>{t('whatsapp', lang)}</a>
@@ -475,7 +476,7 @@ function ContractsSection({ lang }: { lang: import('@/lib/i18n').Lang }) {
                       <button onClick={() => setRenewingTenant(tt)} style={{
                         background: 'var(--success)', border: 'none', borderRadius: '6px',
                         padding: '5px 10px', cursor: 'pointer', fontSize: '12px', color: '#fff', fontWeight: 600,
-                      }}>{lang === 'ar' ? 'تجديد' : 'Renew'}</button>
+                      }}>تجديد</button>
                     )}
                     <button onClick={() => printContract(tt)} style={{
                       background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
@@ -527,7 +528,7 @@ function RenewContractForm({ tenant, lang, onRenew, onCancel }: {
         background: 'var(--bg-card)', borderRadius: '16px 16px 0 0', width: '100%',
         maxWidth: '500px', padding: '20px',
       }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 4px' }}>{lang === 'ar' ? 'تجديد العقد' : 'Renew Contract'}</h2>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 4px' }}>تجديد العقد</h2>
         <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '14px' }}>{tenant.name}</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div>
@@ -542,7 +543,7 @@ function RenewContractForm({ tenant, lang, onRenew, onCancel }: {
             <button onClick={() => onRenew(tenant, start, end)} style={{
               flex: 1, padding: '11px', borderRadius: '8px', border: 'none',
               background: 'var(--success)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-            }}>{lang === 'ar' ? 'تجديد' : 'Renew'}</button>
+            }}>تجديد</button>
             <button onClick={onCancel} style={{
               padding: '11px 20px', borderRadius: '8px', border: '1px solid var(--border)',
               background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer',
@@ -597,7 +598,7 @@ function ExpenseList({ title, items, total, color, lang, onEdit, onDelete }: {
               background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
               padding: '3px 6px', cursor: 'pointer', fontSize: '11px', color: 'var(--primary)',
             }}>{t('edit', lang)}</button>
-            <button onClick={() => { if (confirm(lang === 'ar' ? 'حذف؟' : 'Delete?')) onDelete(e.id); }} style={{
+            <button onClick={() => { if (confirm('حذف؟')) { onDelete(e.id); showToast('تم الحذف'); } }} style={{
               background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
               padding: '3px 6px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)',
             }}>{t('delete', lang)}</button>

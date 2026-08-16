@@ -3,12 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AuditLog, User } from '@/lib/types';
 import { getAuditLog, clearAuditLog, getUsers, addUser, deleteUser, getCurrentUser, logoutUser, generateId, getTenants, getApartments, getPayments, getExpenses, getEvictions } from '@/lib/store';
-import { getLang, setLangPref, t, type Lang } from '@/lib/i18n';
+import { getLang, t, type Lang } from '@/lib/i18n';
+import { showToast } from './Toast';
 
 type Section = 'general' | 'audit' | 'users' | 'data';
 
 export default function SettingsView({ onLogout }: { onLogout: () => void }) {
-  const [lang, setLang] = useState<Lang>(getLang());
+  const lang = getLang();
   const [activeSection, setActiveSection] = useState<Section>('general');
   const [auditLog, setAuditLog] = useState<AuditLog[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -37,12 +38,6 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
       localStorage.setItem('zamzam_theme', th);
       document.documentElement.setAttribute('data-theme', th);
     }
-  };
-
-  const handleLangChange = (l: Lang) => {
-    setLangPref(l);
-    setLang(l);
-    window.location.reload();
   };
 
   const handleLogout = () => { logoutUser(); onLogout(); };
@@ -79,10 +74,10 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
           if (data.expenses) localStorage.setItem('zamzam_expenses', JSON.stringify(data.expenses));
           if (data.evictions) localStorage.setItem('zamzam_evictions', JSON.stringify(data.evictions));
           if (data.users) localStorage.setItem('zamzam_users', JSON.stringify(data.users));
-          alert(t('dataImported', lang));
-          window.location.reload();
+          showToast(t('dataImported', lang));
+          setTimeout(() => window.location.reload(), 1000);
         } catch {
-          alert(t('fileError', lang));
+          showToast(t('fileError', lang), 'error');
         }
       };
       reader.readAsText(file);
@@ -143,29 +138,6 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
       {/* General */}
       {activeSection === 'general' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {/* Language */}
-          <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>{t('language', lang)}</div>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {[
-                { id: 'en' as Lang, label: t('english', lang), icon: 'A' },
-                { id: 'ar' as Lang, label: t('arabic', lang), icon: 'ع' },
-              ].map(l => (
-                <button key={l.id} onClick={() => handleLangChange(l.id)} style={{
-                  flex: 1, padding: '10px', borderRadius: '8px', cursor: 'pointer',
-                  border: lang === l.id ? '2px solid var(--primary)' : '1px solid var(--border)',
-                  background: lang === l.id ? 'var(--primary-light)' : 'var(--bg)',
-                  color: lang === l.id ? 'var(--primary)' : 'var(--text-muted)',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-                  fontWeight: lang === l.id ? 600 : 400, fontSize: '12px',
-                }}>
-                  <span style={{ fontSize: '18px', fontWeight: 700 }}>{l.icon}</span>
-                  {l.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Theme */}
           <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)' }}>
             <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>{t('theme', lang)}</div>
@@ -213,7 +185,7 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
           <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)' }}>
             <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>{t('aboutApp', lang)}</div>
             <InfoRow label={t('version', lang)} value="2.0" />
-            <InfoRow label={t('system', lang)} value={lang === 'ar' ? 'نظام إدارة شركة جوهرة السلمان العقارية' : 'Jawhart Al-Salman Building Management System'} />
+            <InfoRow label={t('system', lang)} value="نظام إدارة شركة جوهرة السلمان العقارية" />
           </div>
         </div>
       )}
@@ -224,7 +196,7 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
             <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{auditLog.length} {t('records', lang)}</span>
             {auditLog.length > 0 && (
-              <button onClick={() => { if (confirm(lang === 'ar' ? 'مسح سجل النشاط؟' : 'Clear audit log?')) { clearAuditLog(); reload(); } }} style={{
+              <button onClick={() => { if (confirm('مسح سجل النشاط؟')) { clearAuditLog(); reload(); showToast('تم مسح السجل'); } }} style={{
                 background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
                 padding: '5px 10px', fontSize: '11px', color: 'var(--danger)', cursor: 'pointer',
               }}>{t('clearAll', lang)}</button>
@@ -236,7 +208,7 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
           ) : (
             <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
               {auditLog.slice(0, 50).map(log => {
-                const dateLocale = lang === 'ar' ? 'ar-KW' : 'en-US';
+                const dateLocale = 'ar-KW';
                 return (
                   <div key={log.id} style={{ padding: '8px 14px', borderBottom: '1px solid var(--border-light)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -294,7 +266,7 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
                   </div>
                 </div>
                 {u.id !== currentUser?.id && u.id !== 'admin1' && (
-                  <button onClick={() => { if (confirm(lang === 'ar' ? `حذف المستخدم ${u.name}؟` : `Delete user ${u.name}?`)) { deleteUser(u.id); reload(); } }} style={{
+                  <button onClick={() => { if (confirm(`حذف المستخدم ${u.name}؟`)) { deleteUser(u.id); reload(); showToast('تم حذف المستخدم'); } }} style={{
                     background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
                     padding: '4px 8px', fontSize: '11px', color: 'var(--danger)', cursor: 'pointer',
                   }}>{t('delete', lang)}</button>
