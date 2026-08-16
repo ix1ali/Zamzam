@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "إدارة عمارة زمزم | Zamzam Building Management",
-  description: "نظام إدارة عمارة زمزم - إدارة المستأجرين والشقق والعقود والدفعات",
+  title: "شركة جوهرة السلمان العقارية | Jawhart Al-Salman Real Estate",
+  description: "نظام إدارة شركة جوهرة السلمان العقارية - إدارة المستأجرين والشقق والعقود والدفعات",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "عمارة زمزم",
+    title: "جوهرة السلمان",
   },
 };
 

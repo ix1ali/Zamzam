@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { loginUser } from '@/lib/store';
 import { User } from '@/lib/types';
+import { getLang, t } from '@/lib/i18n';
 
 export default function LoginScreen({ onLogin }: { onLogin: (user: User) => void }) {
+  const lang = getLang();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +17,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: User) => void
     if (user) {
       onLogin(user);
     } else {
-      setError('اسم المستخدم أو كلمة المرور غير صحيحة');
+      setError(t('invalidCredentials', lang));
     }
   };
 
@@ -36,13 +38,14 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: User) => void
         width: '100%', maxWidth: '360px',
       }}>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#1e3a5f' }}>عمارة زمزم</div>
-          <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>نظام إدارة العمارة</div>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#1e3a5f' }}>شركة جوهرة السلمان العقارية</div>
+          <div style={{ fontSize: '13px', color: '#666', marginTop: '2px' }}>Jawhart Al-Salman Real Estate</div>
+          <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>{t('buildingMgmt', lang)}</div>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', marginBottom: '4px', display: 'block' }}>اسم المستخدم</label>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', marginBottom: '4px', display: 'block' }}>{t('username', lang)}</label>
             <input
               style={{ ...inputStyle, direction: 'ltr' }}
               value={username}
@@ -52,7 +55,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: User) => void
             />
           </div>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', marginBottom: '4px', display: 'block' }}>كلمة المرور</label>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', marginBottom: '4px', display: 'block' }}>{t('password', lang)}</label>
             <input
               style={{ ...inputStyle, direction: 'ltr' }}
               type="password"
@@ -73,7 +76,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: User) => void
             background: '#1e3a5f', color: '#fff',
             fontSize: '15px', fontWeight: 600, cursor: 'pointer', marginTop: '4px',
           }}>
-            دخول
+            {t('login', lang)}
           </button>
         </form>
       </div>

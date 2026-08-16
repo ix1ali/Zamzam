@@ -81,4 +81,4 @@ export interface User {
   createdAt: string;
 }
 
-export type TabId = 'dashboard' | 'tenants' | 'apartments' | 'payments' | 'contracts' | 'financial' | 'settings';
+export type TabId = 'dashboard' | 'apartments' | 'financial' | 'settings';

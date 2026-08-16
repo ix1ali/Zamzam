@@ -1,7 +1,7 @@
 {
-  "name": "إدارة عمارة زمزم",
-  "short_name": "عمارة زمزم",
-  "description": "نظام إدارة عمارة زمزم",
+  "name": "شركة جوهرة السلمان العقارية",
+  "short_name": "جوهرة السلمان",
+  "description": "نظام إدارة شركة جوهرة السلمان العقارية",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f9fb",

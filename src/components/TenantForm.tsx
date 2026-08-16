@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Tenant, Apartment } from '@/lib/types';
 import { getApartments, generateId } from '@/lib/store';
 import { floors } from '@/lib/data';
+import { getLang, t } from '@/lib/i18n';
 
 interface Props {
   tenant?: Tenant | null;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function TenantForm({ tenant, onSave, onCancel }: Props) {
+  const lang = getLang();
   const [apartments, setApartments] = useState<Apartment[]>([]);
   const [form, setForm] = useState<Tenant>({
     id: '', name: '', civilId: '', nationality: '', profession: '', phone: '',
@@ -54,55 +56,55 @@ export default function TenantForm({ tenant, onSave, onCancel }: Props) {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <h2 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>
-            {tenant ? 'تعديل مستأجر' : 'إضافة مستأجر'}
+            {tenant ? t('editTenant', lang) : t('addTenant', lang)}
           </h2>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <input style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} required placeholder="اسم المستأجر *" />
+          <input style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} required placeholder={t('tenantName', lang)} />
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <input style={inputStyle} value={form.civilId} onChange={e => set('civilId', e.target.value)} placeholder="الرقم المدني" />
-            <input style={inputStyle} value={form.nationality} onChange={e => set('nationality', e.target.value)} placeholder="الجنسية" />
+            <input style={inputStyle} value={form.civilId} onChange={e => set('civilId', e.target.value)} placeholder={t('civilId', lang)} />
+            <input style={inputStyle} value={form.nationality} onChange={e => set('nationality', e.target.value)} placeholder={t('nationality', lang)} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <input style={inputStyle} value={form.profession} onChange={e => set('profession', e.target.value)} placeholder="المهنة" />
-            <input style={inputStyle} value={form.phone} onChange={e => set('phone', e.target.value)} type="tel" placeholder="رقم الهاتف" />
+            <input style={inputStyle} value={form.profession} onChange={e => set('profession', e.target.value)} placeholder={t('profession', lang)} />
+            <input style={inputStyle} value={form.phone} onChange={e => set('phone', e.target.value)} type="tel" placeholder={t('phone', lang)} />
           </div>
 
           <select style={inputStyle} value={form.apartmentId} onChange={e => {
             const apt = apartments.find(a => a.id === e.target.value);
             setForm(prev => ({ ...prev, apartmentId: e.target.value, floor: apt?.floor || '', rentAmount: apt?.rentAmount || prev.rentAmount }));
           }} required>
-            <option value="">اختر الشقة *</option>
+            <option value="">{t('selectApt', lang)}</option>
             {floors.map(f => {
               const floorApts = vacantApts.filter(a => a.floor === f.key);
               if (floorApts.length === 0) return null;
               return (
-                <optgroup key={f.key} label={`الدور ${f.label}`}>
-                  {floorApts.map(a => <option key={a.id} value={a.id}>شقة {a.number}</option>)}
+                <optgroup key={f.key} label={`${t('floor', lang)} ${f.label}`}>
+                  {floorApts.map(a => <option key={a.id} value={a.id}>{t('apt', lang)} {a.number}</option>)}
                 </optgroup>
               );
             })}
           </select>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <input style={inputStyle} type="number" value={form.rentAmount || ''} onChange={e => set('rentAmount', Number(e.target.value))} required placeholder="الإيجار (د.ك) *" />
+            <input style={inputStyle} type="number" value={form.rentAmount || ''} onChange={e => set('rentAmount', Number(e.target.value))} required placeholder={t('rentAmountLabel', lang)} />
             <select style={inputStyle} value={form.paymentMethod} onChange={e => set('paymentMethod', e.target.value)}>
-              <option value="نقدا">نقدا</option>
-              <option value="شيك">شيك</option>
-              <option value="تحويل">تحويل بنكي</option>
+              <option value="نقدا">{t('cash', lang)}</option>
+              <option value="شيك">{t('check', lang)}</option>
+              <option value="تحويل">{t('bankTransfer', lang)}</option>
             </select>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             <div>
-              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', display: 'block' }}>بداية العقد</label>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', display: 'block' }}>{t('leaseStart', lang)}</label>
               <input style={{ ...inputStyle, direction: 'ltr' }} type="date" value={form.leaseStart} onChange={e => set('leaseStart', e.target.value)} />
             </div>
             <div>
-              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', display: 'block' }}>نهاية العقد</label>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', display: 'block' }}>{t('leaseEnd', lang)}</label>
               <input style={{ ...inputStyle, direction: 'ltr' }} type="date" value={form.leaseEnd} onChange={e => set('leaseEnd', e.target.value)} />
             </div>
           </div>
@@ -112,13 +114,13 @@ export default function TenantForm({ tenant, onSave, onCancel }: Props) {
               flex: 1, padding: '11px', borderRadius: '8px', border: 'none',
               background: 'var(--primary)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
             }}>
-              {tenant ? 'تحديث' : 'إضافة'}
+              {tenant ? t('update', lang) : t('add', lang)}
             </button>
             <button type="button" onClick={onCancel} style={{
               padding: '11px 20px', borderRadius: '8px', border: '1px solid var(--border)',
               background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer',
             }}>
-              إلغاء
+              {t('cancel', lang)}
             </button>
           </div>
         </form>

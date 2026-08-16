@@ -3,12 +3,10 @@
 import { useState, useEffect } from 'react';
 import { TabId, User } from '@/lib/types';
 import { getCurrentUser } from '@/lib/store';
+import { getLang, applyLangDir } from '@/lib/i18n';
 import BottomNav from '@/components/BottomNav';
 import Dashboard from '@/components/Dashboard';
-import TenantsView from '@/components/TenantsView';
 import ApartmentsView from '@/components/ApartmentsView';
-import PaymentsView from '@/components/PaymentsView';
-import ContractsView from '@/components/ContractsView';
 import FinancialView from '@/components/FinancialView';
 import SettingsView from '@/components/SettingsView';
 import LoginScreen from '@/components/LoginScreen';
@@ -26,6 +24,7 @@ export default function Home() {
     if (theme === 'light' || theme === 'dark') {
       document.documentElement.setAttribute('data-theme', theme);
     }
+    applyLangDir(getLang());
   }, []);
 
   if (!mounted) {
@@ -36,8 +35,8 @@ export default function Home() {
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '36px', marginBottom: '12px' }}>🏢</div>
-          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text)' }}>عمارة زمزم</div>
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>Zamzam Building</div>
+          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text)' }}>شركة جوهرة السلمان العقارية</div>
+          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>Jawhart Al-Salman Real Estate</div>
         </div>
       </div>
     );
@@ -51,10 +50,7 @@ export default function Home() {
     <>
       <main style={{ flex: 1, paddingBottom: '72px' }}>
         {activeTab === 'dashboard' && <Dashboard onNavigate={setActiveTab} />}
-        {activeTab === 'tenants' && <TenantsView />}
         {activeTab === 'apartments' && <ApartmentsView />}
-        {activeTab === 'payments' && <PaymentsView />}
-        {activeTab === 'contracts' && <ContractsView />}
         {activeTab === 'financial' && <FinancialView />}
         {activeTab === 'settings' && <SettingsView onLogout={() => setUser(null)} />}
       </main>

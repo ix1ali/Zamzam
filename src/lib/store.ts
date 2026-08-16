@@ -161,6 +161,22 @@ export function updateApartment(updated: Apartment) {
   }
 }
 
+export function addApartment(apt: Apartment) {
+  const apartments = getApartments();
+  apartments.push(apt);
+  saveApartments(apartments);
+  logAction('create', 'apartment', apt.id, `Added apartment: ${apt.number} (${apt.floor})`);
+}
+
+export function deleteApartment(id: string) {
+  const apartments = getApartments();
+  const apt = apartments.find(a => a.id === id);
+  if (apt && apt.status === 'occupied') return false;
+  saveApartments(apartments.filter(a => a.id !== id));
+  if (apt) logAction('delete', 'apartment', id, `Deleted apartment: ${apt.number}`);
+  return true;
+}
+
 // ── Expenses ──
 
 export function getExpenses(): Expense[] {

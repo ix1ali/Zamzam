@@ -204,7 +204,7 @@ export function printMonthlyStatement(
 </style></head><body>
 <div class="header">
   <div style="font-size:12px">شركة جوهرة السلمان العقارية</div>
-  <h1>عمارة زمزم</h1>
+  <h1>شركة جوهرة السلمان العقارية</h1>
   <h2>كشف إيجارات شهر ${month} ${year}</h2>
   <div style="font-size:11px;color:#666;margin-top:4px">تاريخ الطباعة: ${new Date().toLocaleDateString('ar-KW')}</div>
 </div>
@@ -222,7 +222,7 @@ export function printMonthlyStatement(
   </tr></tfoot>
 </table>
 
-<div class="footer">عمارة زمزم — شركة جوهرة السلمان العقارية</div>
+<div class="footer">شركة جوهرة السلمان العقارية</div>
 <script>setTimeout(()=>window.print(),500)</script>
 </body></html>`);
   w.document.close();
@@ -244,36 +244,36 @@ export function printContract(tenant: Tenant) {
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif;
-    padding: 30px 40px; color: #000; direction: rtl; max-width: 850px; margin: 0 auto;
-    line-height: 1.8; font-size: 13px;
+    padding: 12px 25px; color: #000; direction: rtl; max-width: 850px; margin: 0 auto;
+    line-height: 1.5; font-size: 11px;
   }
-  .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .header-right { text-align: right; font-size: 14px; }
-  .header-right div:first-child { font-weight: 700; font-size: 16px; }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .header-right { text-align: right; font-size: 12px; }
+  .header-right div:first-child { font-weight: 700; font-size: 14px; }
   .header-center { text-align: center; }
-  .header-center .title { font-weight: 700; font-size: 18px; }
-  .header-center .title-en { font-size: 13px; }
-  .header-left { text-align: left; font-size: 12px; }
-  .header-left div:first-child { font-weight: 700; font-size: 13px; }
-  .date-row { text-align: right; font-size: 14px; margin: 8px 0; }
-  .date-row b { font-size: 15px; }
-  .party-section { display: flex; justify-content: space-between; margin: 6px 0; font-size: 13px; }
+  .header-center .title { font-weight: 700; font-size: 16px; }
+  .header-center .title-en { font-size: 11px; }
+  .header-left { text-align: left; font-size: 10px; }
+  .header-left div:first-child { font-weight: 700; font-size: 11px; }
+  .date-row { text-align: right; font-size: 11px; margin: 3px 0; }
+  .date-row b { font-size: 12px; }
+  .party-section { display: flex; justify-content: space-between; margin: 3px 0; font-size: 11px; }
   .party-right { text-align: right; width: 48%; }
   .party-left { text-align: right; width: 48%; }
-  .center-text { text-align: center; font-weight: 700; font-size: 14px; margin: 6px 0; }
-  .field-line { font-size: 13px; margin: 2px 0; }
+  .center-text { text-align: center; font-weight: 700; font-size: 11px; margin: 3px 0; }
+  .field-line { font-size: 11px; margin: 1px 0; }
   .field-line b { font-weight: 700; }
-  .property-line { font-size: 13px; margin: 10px 0; line-height: 1.9; }
-  .clause { margin-bottom: 2px; text-align: justify; font-size: 12.5px; line-height: 1.7; }
+  .property-line { font-size: 11px; margin: 4px 0; line-height: 1.5; }
+  .clause { margin-bottom: 0; text-align: justify; font-size: 10px; line-height: 1.45; }
   .clause b { font-weight: 700; }
-  .signatures { display: flex; justify-content: space-between; margin-top: 30px; }
+  .signatures { display: flex; justify-content: space-between; margin-top: 12px; }
   .sig-block { text-align: center; width: 42%; }
-  .sig-block .title { font-weight: 700; font-size: 14px; }
-  .sig-block .sub { font-size: 12px; }
-  .sig-block .name { font-size: 13px; margin-top: 2px; }
-  .sig-dots { margin-top: 40px; font-size: 14px; letter-spacing: 2px; }
-  .extra-dots { margin-top: 30px; text-align: center; font-size: 14px; letter-spacing: 2px; }
-  @media print { body { padding: 20px 30px; font-size: 12px; } .clause { font-size: 11.5px; } @page { size: A4; margin: 10mm; } }
+  .sig-block .title { font-weight: 700; font-size: 11px; }
+  .sig-block .sub { font-size: 10px; }
+  .sig-block .name { font-size: 10px; margin-top: 1px; }
+  .sig-dots { margin-top: 20px; font-size: 11px; letter-spacing: 2px; }
+  .extra-dots { margin-top: 10px; text-align: center; font-size: 11px; letter-spacing: 2px; }
+  @media print { body { padding: 8px 20px; } .clause { font-size: 9.5px; } @page { size: A4; margin: 6mm; } }
 </style></head><body>
 
 <!-- Header -->
@@ -523,7 +523,7 @@ export function printFinancialStatement(month: string, year: number) {
 </style></head><body>
 <div class="header">
   <div style="font-size:12px">شركة جوهرة السلمان العقارية</div>
-  <h1>عمارة زمزم</h1>
+  <h1>شركة جوهرة السلمان العقارية</h1>
   <h2>الكشف المالي — ${month} ${year}</h2>
 </div>
 
@@ -548,7 +548,7 @@ export function printFinancialStatement(month: string, year: number) {
   <div class="share-row"><span>حصة عباس السلمان</span><span style="font-weight:700">${share.toLocaleString()} د.ك</span></div>
 </div>
 
-<div class="footer">عمارة زمزم — شركة جوهرة السلمان العقارية</div>
+<div class="footer">شركة جوهرة السلمان العقارية</div>
 <script>setTimeout(()=>window.print(),500)</script>
 </body></html>`);
   w.document.close();
