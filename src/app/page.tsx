@@ -32,12 +32,21 @@ export default function Home() {
     return (
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        minHeight: '100dvh', background: 'var(--bg)',
+        minHeight: '100dvh',
+        background: 'linear-gradient(160deg, #0f1923 0%, #1e3a5f 40%, #2d5a8e 70%, #1e3a5f 100%)',
       }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '36px', marginBottom: '12px' }}>🏢</div>
-          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text)' }}>شركة جوهرة السلمان العقارية</div>
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>Jawhart Al-Salman Real Estate</div>
+        <div style={{ textAlign: 'center', animation: 'fadeIn 0.5s ease-out' }}>
+          <div style={{
+            width: '64px', height: '64px', borderRadius: '18px', margin: '0 auto 16px',
+            background: 'rgba(201,162,39,0.15)', border: '1px solid rgba(201,162,39,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c9a227" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" />
+            </svg>
+          </div>
+          <div style={{ fontSize: '20px', fontWeight: 800, color: '#fff' }}>شركة جوهرة السلمان العقارية</div>
+          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '6px', letterSpacing: '1px' }}>نظام إدارة العقارات</div>
         </div>
       </div>
     );

@@ -293,7 +293,7 @@ export function getUsers(): User[] {
     const defaultAdmin: User = {
       id: 'admin1',
       username: 'admin',
-      password: 'admin123',
+      password: 'admin',
       name: 'مدير النظام',
       role: 'admin',
       createdAt: new Date().toISOString(),

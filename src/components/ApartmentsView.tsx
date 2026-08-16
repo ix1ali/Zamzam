@@ -60,13 +60,14 @@ export default function ApartmentsView() {
   return (
     <div style={{ padding: '16px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <h1 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>{t('navApartments', lang)}</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <h1 style={{ fontSize: '20px', fontWeight: 800, margin: 0 }}>{t('navApartments', lang)}</h1>
         {subTab === 'apartments' && (
           <button onClick={() => setShowAddApt(true)} style={{
-            background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '8px',
-            padding: '7px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', gap: '4px',
+            background: 'var(--gradient-primary)', color: '#fff', border: 'none', borderRadius: '10px',
+            padding: '8px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: '5px',
+            boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
           }}>
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
             {t('apt', lang)}
@@ -75,15 +76,15 @@ export default function ApartmentsView() {
       </div>
 
       {/* Sub-tabs */}
-      <div style={{ display: 'flex', gap: '4px', marginBottom: '12px', background: 'var(--bg)', borderRadius: '10px', padding: '3px' }}>
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '14px', background: 'var(--bg)', borderRadius: '14px', padding: '4px' }}>
         {subTabs.map(tab => (
           <button key={tab.id} onClick={() => setSubTab(tab.id)} style={{
-            flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-            fontWeight: 600, fontSize: '13px',
+            flex: 1, padding: '9px', borderRadius: '11px', border: 'none', cursor: 'pointer',
+            fontWeight: 700, fontSize: '13px',
             background: subTab === tab.id ? 'var(--bg-card)' : 'transparent',
             color: subTab === tab.id ? 'var(--primary)' : 'var(--text-muted)',
             boxShadow: subTab === tab.id ? 'var(--shadow-sm)' : 'none',
-            transition: 'all 0.2s',
+            transition: 'all 0.25s ease',
           }}>{tab.label}</button>
         ))}
       </div>
@@ -96,10 +97,10 @@ export default function ApartmentsView() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={{
-              width: '100%', padding: '10px 14px', borderRadius: '8px',
+              width: '100%', padding: '11px 14px', borderRadius: '12px',
               border: '1px solid var(--border)', background: 'var(--bg-card)',
               color: 'var(--text)', fontSize: '13px', outline: 'none', boxSizing: 'border-box',
-              marginBottom: '10px',
+              marginBottom: '10px', boxShadow: 'var(--shadow-sm)',
             }}
           />
 
@@ -114,8 +115,8 @@ export default function ApartmentsView() {
           </div>
 
           {/* Floors */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {[...floorGroups].reverse().map(floor => {
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {[...floorGroups].reverse().map((floor, fi) => {
               const isOpen = openFloors.has(floor.key);
               const floorVacant = floor.apartments.filter(a => a.status === 'vacant').length;
               const floorFlagged = floor.apartments.filter(a => a.flagged).length;
@@ -129,16 +130,18 @@ export default function ApartmentsView() {
 
               return (
                 <div key={floor.key} style={{
-                  background: 'var(--bg-card)', borderRadius: '12px',
+                  background: 'var(--bg-card)', borderRadius: '16px',
                   border: '1px solid var(--border)', overflow: 'hidden',
                   borderInlineStart: `3px solid ${borderColor}`,
+                  boxShadow: 'var(--shadow-sm)',
+                  animation: `fadeInUp 0.3s ease-out ${fi * 0.05}s both`,
                 }}>
                   <div onClick={() => toggleFloor(floor.key)} style={{
-                    padding: '10px 14px', cursor: 'pointer',
+                    padding: '12px 14px', cursor: 'pointer',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontWeight: 600, fontSize: '14px' }}>{floor.label}</span>
+                      <span style={{ fontWeight: 700, fontSize: '14px' }}>{floor.label}</span>
                       <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>
                         {floor.apartments.length} {t('apt', lang)}
                       </span>
@@ -151,17 +154,17 @@ export default function ApartmentsView() {
                         </span>
                       )}
                       {floorVacant > 0 && (
-                        <span style={{ color: '#8b5cf6', fontSize: '11px', fontWeight: 600 }}>{floorVacant} {t('vacant', lang)}</span>
+                        <span style={{ color: '#8b5cf6', fontSize: '11px', fontWeight: 700 }}>{floorVacant} {t('vacant', lang)}</span>
                       )}
                       <div style={{ width: '40px', height: '6px', background: 'var(--bg)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${pct}%`, borderRadius: '3px', background: pct === 100 ? 'var(--success)' : '#8b5cf6' }} />
+                        <div style={{ height: '100%', width: `${pct}%`, borderRadius: '3px', background: pct === 100 ? 'var(--success)' : '#8b5cf6', transition: 'width 0.3s ease' }} />
                       </div>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{isOpen ? '▲' : '▼'}</span>
+                      <svg width="12" height="12" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" style={{ transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)' }}><path d="M6 9l6 6 6-6"/></svg>
                     </div>
                   </div>
 
                   {isOpen && (
-                    <div style={{ padding: '8px 12px 12px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px' }}>
+                    <div style={{ padding: '8px 12px 14px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px' }}>
                       {floor.apartments.map(apt => {
                         const tenant = tenants.find(tt => tt.id === apt.tenantId);
                         const isVacant = apt.status === 'vacant';
@@ -179,24 +182,29 @@ export default function ApartmentsView() {
 
                         return (
                           <div key={apt.id} onClick={() => setEditingApt(apt)} style={{
-                            borderRadius: '10px', padding: '10px', textAlign: 'center', cursor: 'pointer',
+                            borderRadius: '12px', padding: '10px', textAlign: 'center', cursor: 'pointer',
                             border: `1.5px solid ${borderClr}`, background: bgColor, position: 'relative',
-                          }}>
+                            transition: 'transform 0.15s',
+                          }}
+                          onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.96)')}
+                          onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
+                          onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+                          >
                             {isFlagged && (
                               <span style={{ position: 'absolute', top: '4px', insetInlineStart: '6px' }}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--danger)" stroke="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><text x="12" y="17" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">!</text></svg>
                               </span>
                             )}
-                            <div style={{ fontWeight: 700, fontSize: '18px', color: numColor }}>{apt.number}</div>
+                            <div style={{ fontWeight: 800, fontSize: '18px', color: numColor }}>{apt.number}</div>
                             {tenant ? (
                               <div style={{ fontSize: '9px', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-muted)' }}>
                                 {tenant.name.split(' ').slice(0, 2).join(' ')}
                               </div>
                             ) : (
-                              <div style={{ fontSize: '10px', color: '#8b5cf6', fontWeight: 600, marginTop: '3px' }}>{t('vacant', lang)}</div>
+                              <div style={{ fontSize: '10px', color: '#8b5cf6', fontWeight: 700, marginTop: '3px' }}>{t('vacant', lang)}</div>
                             )}
                             {tenant && (
-                              <div style={{ fontSize: '9px', color: 'var(--success)', marginTop: '2px', fontWeight: 600 }}>{apt.rentAmount} {t('kwd', lang)}</div>
+                              <div style={{ fontSize: '9px', color: 'var(--success)', marginTop: '2px', fontWeight: 700 }}>{apt.rentAmount} {t('kwd', lang)}</div>
                             )}
                           </div>
                         );
@@ -288,11 +296,12 @@ function TenantsSection({ tenants, apartments, lang, reload }: {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{tenants.length} {t('tenant', lang)}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>{tenants.length} {t('tenant', lang)}</span>
         <button onClick={() => { setEditing(null); setShowForm(true); }} style={{
-          background: 'var(--primary)', color: '#fff', border: 'none',
-          borderRadius: '8px', padding: '7px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+          background: 'var(--gradient-primary)', color: '#fff', border: 'none',
+          borderRadius: '10px', padding: '7px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
         }}>
           + {t('add', lang)}
         </button>
@@ -303,10 +312,10 @@ function TenantsSection({ tenants, apartments, lang, reload }: {
         value={search}
         onChange={e => setSearch(e.target.value)}
         style={{
-          width: '100%', padding: '10px 14px', borderRadius: '8px',
+          width: '100%', padding: '11px 14px', borderRadius: '12px',
           border: '1px solid var(--border)', background: 'var(--bg-card)',
           color: 'var(--text)', fontSize: '13px', outline: 'none', boxSizing: 'border-box',
-          marginBottom: '10px',
+          marginBottom: '12px', boxShadow: 'var(--shadow-sm)',
         }}
       />
 
@@ -316,22 +325,23 @@ function TenantsSection({ tenants, apartments, lang, reload }: {
           const isExpanded = expanded === tt.id;
           return (
             <div key={tt.id} style={{
-              background: 'var(--bg-card)', borderRadius: '10px',
+              background: 'var(--bg-card)', borderRadius: '16px',
               border: '1px solid var(--border)', overflow: 'hidden',
+              boxShadow: 'var(--shadow-sm)',
             }}>
               <div onClick={() => setExpanded(isExpanded ? null : tt.id)} style={{
                 padding: '12px 14px', cursor: 'pointer',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}>
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: '14px' }}>{tt.name}</div>
+                  <div style={{ fontWeight: 700, fontSize: '14px' }}>{tt.name}</div>
                   <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '2px' }}>
                     {t('apt', lang)} {apt?.number} - {tt.floor}
                     {tt.phone && <span style={{ marginInlineStart: '8px', direction: 'ltr' as const }}>{tt.phone}</span>}
                   </div>
                 </div>
-                <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '15px' }}>
-                  {tt.rentAmount} <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{t('kwd', lang)}</span>
+                <div style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '15px' }}>
+                  {tt.rentAmount} <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>{t('kwd', lang)}</span>
                 </div>
               </div>
 
@@ -420,8 +430,9 @@ function InfoCell({ label, value }: { label: string; value: string }) {
 function Btn({ label, onClick, color }: { label: string; onClick: () => void; color?: string }) {
   return (
     <button onClick={(e) => { e.stopPropagation(); onClick(); }} style={{
-      padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--border)',
-      background: 'var(--bg)', color: color || 'var(--text)', fontSize: '12px', cursor: 'pointer',
+      padding: '7px 14px', borderRadius: '10px', border: '1px solid var(--border)',
+      background: 'var(--bg)', color: color || 'var(--text)', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
+      transition: 'transform 0.15s',
     }}>{label}</button>
   );
 }
@@ -430,9 +441,14 @@ function ActionBtn({ icon, label, color, onClick }: { icon: string; label: strin
   return (
     <button onClick={onClick} style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '10px',
-      padding: '10px 6px', cursor: 'pointer', color, fontSize: '10px', fontWeight: 600,
-    }}>
+      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '12px',
+      padding: '10px 6px', cursor: 'pointer', color, fontSize: '10px', fontWeight: 700,
+      transition: 'transform 0.15s',
+    }}
+    onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.96)')}
+    onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
+    onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+    >
       <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d={icon} /></svg>
       {label}
     </button>
@@ -459,36 +475,41 @@ function ApartmentDetail({ apartment, tenant, lang, onSave, onEvict, onDeleteTen
   const statusLabel = apartment.flagged ? t('flagged', lang) : isVacant ? t('vacant', lang) : t('occupied', lang);
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px',
+    width: '100%', padding: '12px 14px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg)',
     color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+    transition: 'border-color 0.2s',
   };
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 100,
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease-out',
     }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg-card)', borderRadius: '16px 16px 0 0', width: '100%',
-        maxWidth: '500px', padding: '20px', maxHeight: '90vh', overflowY: 'auto',
+        background: 'var(--bg-card)', borderRadius: '20px 20px 0 0', width: '100%',
+        maxWidth: '500px', padding: '24px 20px', maxHeight: '90vh', overflowY: 'auto',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.15)',
+        animation: 'fadeInUp 0.3s ease-out',
       }}>
+        <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'var(--border)', margin: '0 auto 16px' }} />
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>{t('apt', lang)} {apartment.number}</h2>
-            <div style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>{t('apt', lang)} {apartment.number}</h2>
+            <div style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
               <span style={{ color: 'var(--text-muted)' }}>{apartment.floor}</span>
-              <span style={{ display: 'inline-block', padding: '1px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, background: statusColor, color: '#fff' }}>{statusLabel}</span>
+              <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, background: statusColor, color: '#fff' }}>{statusLabel}</span>
             </div>
           </div>
-          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--success)' }}>{apartment.rentAmount} <span style={{ fontSize: '11px', fontWeight: 400 }}>{t('kwd', lang)}</span></div>
+          <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--success)' }}>{apartment.rentAmount} <span style={{ fontSize: '11px', fontWeight: 400 }}>{t('kwd', lang)}</span></div>
         </div>
 
         {/* Tenant Info */}
         {tenant && (
-          <div style={{ background: 'var(--bg)', padding: '12px', borderRadius: '10px', fontSize: '13px', marginBottom: '14px', borderInlineStart: '3px solid var(--success)' }}>
-            <div style={{ fontWeight: 700, fontSize: '15px', marginBottom: '4px' }}>{tenant.name}</div>
+          <div style={{ background: 'var(--bg)', padding: '14px', borderRadius: '14px', fontSize: '13px', marginBottom: '14px', borderInlineStart: '3px solid var(--success)' }}>
+            <div style={{ fontWeight: 800, fontSize: '15px', marginBottom: '6px' }}>{tenant.name}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', fontSize: '12px', color: 'var(--text-muted)' }}>
               {tenant.civilId && <div>{t('civilId', lang)}: <span style={{ color: 'var(--text)' }}>{tenant.civilId}</span></div>}
               {tenant.phone && <div>{t('phone', lang)}: <span style={{ color: 'var(--text)' }}>{tenant.phone}</span></div>}
@@ -545,9 +566,9 @@ function ApartmentDetail({ apartment, tenant, lang, onSave, onEvict, onDeleteTen
           <button onClick={() => {
             if (confirm(`حذف المستأجر ${tenant.name}؟`)) onDeleteTenant(apartment, tenant);
           }} style={{
-            width: '100%', padding: '10px', borderRadius: '8px',
+            width: '100%', padding: '11px', borderRadius: '12px',
             border: '1px solid var(--danger)', background: 'var(--danger-light)',
-            color: 'var(--danger)', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+            color: 'var(--danger)', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
             marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
           }}>
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
@@ -560,9 +581,9 @@ function ApartmentDetail({ apartment, tenant, lang, onSave, onEvict, onDeleteTen
           <button onClick={() => {
             if (confirm(`حذف شقة ${apartment.number}؟`)) onDeleteApt(apartment);
           }} style={{
-            width: '100%', padding: '10px', borderRadius: '8px',
+            width: '100%', padding: '11px', borderRadius: '12px',
             border: '1px solid var(--danger)', background: 'transparent',
-            color: 'var(--danger)', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+            color: 'var(--danger)', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
             marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
           }}>
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
@@ -572,8 +593,8 @@ function ApartmentDetail({ apartment, tenant, lang, onSave, onEvict, onDeleteTen
 
         {/* Notes & Flag section */}
         <button onClick={() => setShowNotes(!showNotes)} style={{
-          width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid var(--border)',
-          background: 'var(--bg)', color: 'var(--text-muted)', fontSize: '12px', cursor: 'pointer',
+          width: '100%', padding: '10px', borderRadius: '12px', border: '1px solid var(--border)',
+          background: 'var(--bg)', color: 'var(--text-muted)', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
           marginBottom: showNotes ? '10px' : '0',
         }}>
           {showNotes ? `▲ ${t('hideNotes', lang)}` : `▼ ${t('notesFlags', lang)}`}
@@ -588,8 +609,9 @@ function ApartmentDetail({ apartment, tenant, lang, onSave, onEvict, onDeleteTen
             </label>
             {flagged && <input style={{ ...inputStyle, borderColor: 'var(--danger)' }} value={flagReason} onChange={e => setFlagReason(e.target.value)} placeholder={t('flagReason', lang)} />}
             <button onClick={() => onSave({ ...apartment, notes, flagged, flagReason: flagged ? flagReason : '' })} style={{
-              width: '100%', padding: '11px', borderRadius: '8px', border: 'none',
-              background: 'var(--primary)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              width: '100%', padding: '12px', borderRadius: '12px', border: 'none',
+              background: 'var(--gradient-primary)', color: '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
             }}>{t('saveNotes', lang)}</button>
           </div>
         )}
@@ -610,9 +632,10 @@ function AddApartmentForm({ lang, onSave, onCancel }: {
   const [rent, setRent] = useState('');
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px',
+    width: '100%', padding: '12px 14px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg)',
     color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+    transition: 'border-color 0.2s',
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -632,28 +655,33 @@ function AddApartmentForm({ lang, onSave, onCancel }: {
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 100,
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease-out',
     }} onClick={onCancel}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg-card)', borderRadius: '16px 16px 0 0', width: '100%',
-        maxWidth: '500px', padding: '20px',
+        background: 'var(--bg-card)', borderRadius: '20px 20px 0 0', width: '100%',
+        maxWidth: '500px', padding: '24px 20px',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.15)',
+        animation: 'fadeInUp 0.3s ease-out',
       }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 14px' }}>{t('addApt', lang)}</h2>
+        <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'var(--border)', margin: '0 auto 16px' }} />
+        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: '0 0 16px' }}>{t('addApt', lang)}</h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <input style={inputStyle} value={number} onChange={e => setNumber(e.target.value)} required placeholder={t('aptNumber', lang)} />
           <select style={inputStyle} value={floor} onChange={e => setFloor(e.target.value)}>
             {floors.map(f => <option key={f.key} value={f.key}>{f.label}</option>)}
           </select>
           <input style={inputStyle} type="number" value={rent} onChange={e => setRent(e.target.value)} placeholder={t('rentAmountLabel', lang)} />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <button type="submit" style={{
-              flex: 1, padding: '11px', borderRadius: '8px', border: 'none',
-              background: 'var(--primary)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              flex: 1, padding: '12px', borderRadius: '12px', border: 'none',
+              background: 'var(--gradient-primary)', color: '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
             }}>{t('add', lang)}</button>
             <button type="button" onClick={onCancel} style={{
-              padding: '11px 20px', borderRadius: '8px', border: '1px solid var(--border)',
-              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer',
+              padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)',
+              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer', fontWeight: 500,
             }}>{t('cancel', lang)}</button>
           </div>
         </form>
@@ -673,36 +701,41 @@ function EvictionModal({ tenant, lang, onConfirm, onCancel }: {
   const [notes, setNotes] = useState('');
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px',
+    width: '100%', padding: '12px 14px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg)',
     color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+    transition: 'border-color 0.2s',
   };
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 100,
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease-out',
     }} onClick={onCancel}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg-card)', borderRadius: '16px 16px 0 0', width: '100%',
-        maxWidth: '500px', padding: '20px',
+        background: 'var(--bg-card)', borderRadius: '20px 20px 0 0', width: '100%',
+        maxWidth: '500px', padding: '24px 20px',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.15)',
+        animation: 'fadeInUp 0.3s ease-out',
       }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 4px', color: 'var(--danger)' }}>{t('evictionTitle', lang)}</h2>
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '14px' }}>
+        <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'var(--border)', margin: '0 auto 16px' }} />
+        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: '0 0 4px', color: 'var(--danger)' }}>{t('evictionTitle', lang)}</h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
           {tenant.name}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <input style={inputStyle} value={reason} onChange={e => setReason(e.target.value)} placeholder={t('evictionReason', lang)} />
           <textarea style={{ ...inputStyle, minHeight: '50px', resize: 'vertical' }} value={notes} onChange={e => setNotes(e.target.value)} placeholder={t('notes', lang)} />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <button onClick={() => { if (reason.trim()) onConfirm(reason, notes); }} style={{
-              flex: 1, padding: '11px', borderRadius: '8px', border: 'none',
-              background: 'var(--danger)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              flex: 1, padding: '12px', borderRadius: '12px', border: 'none',
+              background: 'var(--danger)', color: '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
               opacity: reason.trim() ? 1 : 0.5,
             }}>{t('confirmEviction', lang)}</button>
             <button onClick={onCancel} style={{
-              padding: '11px 20px', borderRadius: '8px', border: '1px solid var(--border)',
-              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer',
+              padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)',
+              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer', fontWeight: 500,
             }}>{t('cancel', lang)}</button>
           </div>
         </div>

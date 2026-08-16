@@ -15,11 +15,13 @@ export default function BottomNav({ active, onChange }: { active: TabId; onChang
   return (
     <nav className="no-print" style={{
       position: 'fixed', bottom: 0, left: 0, right: 0,
-      background: 'var(--bg-nav)', borderTop: '1px solid var(--border)',
+      background: 'var(--bg-nav)',
+      backdropFilter: 'var(--nav-blur)',
+      WebkitBackdropFilter: 'var(--nav-blur)',
+      borderTop: '1px solid var(--border)',
       display: 'flex', justifyContent: 'space-around', alignItems: 'stretch',
       zIndex: 50,
       paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-      boxShadow: '0 -2px 10px rgba(0,0,0,0.08)',
     }}>
       {tabs.map(tab => {
         const isActive = active === tab.id;
@@ -29,26 +31,38 @@ export default function BottomNav({ active, onChange }: { active: TabId; onChang
             onClick={() => onChange(tab.id)}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              gap: '2px',
+              gap: '3px',
               background: 'none', border: 'none', cursor: 'pointer',
               padding: '8px 4px 10px',
               flex: 1,
               position: 'relative',
               color: isActive ? 'var(--primary)' : 'var(--text-muted)',
-              transition: 'color 0.2s',
+              transition: 'color 0.25s ease',
             }}
           >
             {isActive && (
               <div style={{
-                position: 'absolute', top: 0, left: '25%', right: '25%',
-                height: '2.5px', borderRadius: '0 0 2px 2px',
-                background: 'var(--primary)',
+                position: 'absolute', top: '-1px', left: '20%', right: '20%',
+                height: '3px', borderRadius: '0 0 3px 3px',
+                background: 'var(--gradient-primary)',
+                boxShadow: '0 2px 8px rgba(30,58,95,0.3)',
               }} />
             )}
-            <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth={isActive ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d={tab.icon} />
-            </svg>
-            <span style={{ fontSize: '10px', fontWeight: isActive ? 700 : 400, lineHeight: 1 }}>{t(tab.labelKey, lang)}</span>
+            <div style={{
+              padding: '4px',
+              borderRadius: '10px',
+              background: isActive ? 'var(--primary-light)' : 'transparent',
+              transition: 'background 0.25s ease',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth={isActive ? 2.2 : 1.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <path d={tab.icon} />
+              </svg>
+            </div>
+            <span style={{
+              fontSize: '10px', fontWeight: isActive ? 700 : 500, lineHeight: 1,
+              transition: 'font-weight 0.2s',
+            }}>{t(tab.labelKey, lang)}</span>
           </button>
         );
       })}

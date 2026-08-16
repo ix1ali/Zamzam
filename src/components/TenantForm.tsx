@@ -37,25 +37,30 @@ export default function TenantForm({ tenant, onSave, onCancel }: Props) {
   const set = (key: keyof Tenant, value: string | number) => setForm(prev => ({ ...prev, [key]: value }));
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px',
+    width: '100%', padding: '12px 14px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg)',
     color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+    transition: 'border-color 0.2s',
   };
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 100,
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease-out',
     }} onClick={onCancel}>
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          background: 'var(--bg-card)', borderRadius: '16px 16px 0 0', width: '100%',
-          maxWidth: '500px', maxHeight: '90vh', overflow: 'auto', padding: '20px',
+          background: 'var(--bg-card)', borderRadius: '20px 20px 0 0', width: '100%',
+          maxWidth: '500px', maxHeight: '90vh', overflow: 'auto', padding: '24px 20px',
+          boxShadow: '0 -8px 32px rgba(0,0,0,0.15)',
+          animation: 'fadeInUp 0.3s ease-out',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>
+        <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'var(--border)', margin: '0 auto 16px' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h2 style={{ fontSize: '17px', fontWeight: 800, margin: 0 }}>
             {tenant ? t('editTenant', lang) : t('addTenant', lang)}
           </h2>
         </div>
@@ -100,25 +105,26 @@ export default function TenantForm({ tenant, onSave, onCancel }: Props) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             <div>
-              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', display: 'block' }}>{t('leaseStart', lang)}</label>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontWeight: 600 }}>{t('leaseStart', lang)}</label>
               <input style={{ ...inputStyle, direction: 'ltr' }} type="date" value={form.leaseStart} onChange={e => set('leaseStart', e.target.value)} />
             </div>
             <div>
-              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', display: 'block' }}>{t('leaseEnd', lang)}</label>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontWeight: 600 }}>{t('leaseEnd', lang)}</label>
               <input style={{ ...inputStyle, direction: 'ltr' }} type="date" value={form.leaseEnd} onChange={e => set('leaseEnd', e.target.value)} />
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <button type="submit" style={{
-              flex: 1, padding: '11px', borderRadius: '8px', border: 'none',
-              background: 'var(--primary)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              flex: 1, padding: '12px', borderRadius: '12px', border: 'none',
+              background: 'var(--gradient-primary)', color: '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
             }}>
               {tenant ? t('update', lang) : t('add', lang)}
             </button>
             <button type="button" onClick={onCancel} style={{
-              padding: '11px 20px', borderRadius: '8px', border: '1px solid var(--border)',
-              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer',
+              padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)',
+              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer', fontWeight: 500,
             }}>
               {t('cancel', lang)}
             </button>

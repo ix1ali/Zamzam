@@ -23,18 +23,18 @@ export default function FinancialView() {
 
   return (
     <div style={{ padding: '16px' }}>
-      <h1 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 10px' }}>{t('navFinancial', lang)}</h1>
+      <h1 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 12px' }}>{t('navFinancial', lang)}</h1>
 
       {/* Sub-tabs */}
-      <div style={{ display: 'flex', gap: '4px', marginBottom: '14px', background: 'var(--bg)', borderRadius: '10px', padding: '3px' }}>
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '14px', background: 'var(--bg)', borderRadius: '14px', padding: '4px' }}>
         {subTabs.map(tab => (
           <button key={tab.id} onClick={() => setSubTab(tab.id)} style={{
-            flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-            fontWeight: 600, fontSize: '12px',
+            flex: 1, padding: '9px', borderRadius: '11px', border: 'none', cursor: 'pointer',
+            fontWeight: 700, fontSize: '12px',
             background: subTab === tab.id ? 'var(--bg-card)' : 'transparent',
             color: subTab === tab.id ? 'var(--primary)' : 'var(--text-muted)',
             boxShadow: subTab === tab.id ? 'var(--shadow-sm)' : 'none',
-            transition: 'all 0.2s',
+            transition: 'all 0.25s ease',
           }}>{tab.label}</button>
         ))}
       </div>
@@ -76,19 +76,20 @@ function StatementSection({ lang, months }: { lang: import('@/lib/i18n').Lang; m
   const expensePct = totalRent > 0 ? Math.round((totalExpensesAmount / totalRent) * 100) : 0;
 
   const selectStyle: React.CSSProperties = {
-    padding: '8px 10px', borderRadius: '8px',
+    padding: '9px 12px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg-card)',
     color: 'var(--text)', fontSize: '13px', outline: 'none',
+    boxShadow: 'var(--shadow-sm)',
   };
 
   return (
-    <>
+    <div style={{ animation: 'fadeInUp 0.3s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{months[selectedMonth]} {selectedYear}</div>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>{months[selectedMonth]} {selectedYear}</div>
         <button onClick={() => printFinancialStatement(monthsAr[selectedMonth], selectedYear)} style={{
           background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
-          borderRadius: '8px', padding: '7px 12px', fontSize: '12px', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', gap: '4px',
+          borderRadius: '10px', padding: '7px 12px', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
+          display: 'flex', alignItems: 'center', gap: '4px', boxShadow: 'var(--shadow-sm)',
         }}>
           <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
           {t('print', lang)}
@@ -105,21 +106,21 @@ function StatementSection({ lang, months }: { lang: import('@/lib/i18n').Lang; m
       </div>
 
       {/* Income */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', marginBottom: '10px' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '16px', border: '1px solid var(--border)', marginBottom: '10px', boxShadow: 'var(--shadow-sm)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600 }}>{t('totalRent', lang)}</span>
-          <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--success)' }}>{totalRent.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: 400 }}>{t('kwd', lang)}</span></span>
+          <span style={{ fontSize: '13px', fontWeight: 700 }}>{t('totalRent', lang)}</span>
+          <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>{totalRent.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: 400 }}>{t('kwd', lang)}</span></span>
         </div>
       </div>
 
       {/* Expenses */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', marginBottom: '10px' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '16px', border: '1px solid var(--border)', marginBottom: '10px', boxShadow: 'var(--shadow-sm)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600 }}>{t('expenses', lang)}</span>
-          <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--danger)' }}>{totalExpensesAmount.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: 400 }}>{t('kwd', lang)}</span></span>
+          <span style={{ fontSize: '13px', fontWeight: 700 }}>{t('expenses', lang)}</span>
+          <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--danger)' }}>{totalExpensesAmount.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: 400 }}>{t('kwd', lang)}</span></span>
         </div>
         <div style={{ height: '6px', background: 'var(--bg)', borderRadius: '3px', overflow: 'hidden', marginBottom: '10px' }}>
-          <div style={{ height: '100%', width: `${Math.min(expensePct, 100)}%`, borderRadius: '3px', background: expensePct > 80 ? 'var(--danger)' : expensePct > 50 ? 'var(--warning)' : 'var(--success)' }} />
+          <div style={{ height: '100%', width: `${Math.min(expensePct, 100)}%`, borderRadius: '3px', background: expensePct > 80 ? 'var(--danger)' : expensePct > 50 ? 'var(--warning)' : 'var(--success)', transition: 'width 0.3s ease' }} />
         </div>
         <ExpRow label={t('generalExpenses', lang)} value={totalGeneral} color="var(--danger)" l={lang} />
         <ExpRow label={t('electricity', lang)} value={totalElectricity} color="var(--warning)" l={lang} />
@@ -129,39 +130,39 @@ function StatementSection({ lang, months }: { lang: import('@/lib/i18n').Lang; m
       {/* Net Profit */}
       <div style={{
         background: netProfit >= 0 ? 'var(--success-light)' : 'var(--danger-light)',
-        borderRadius: '12px', padding: '14px',
+        borderRadius: '16px', padding: '16px',
         border: `1px solid ${netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}`,
-        marginBottom: '10px',
+        marginBottom: '10px', boxShadow: 'var(--shadow-sm)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '14px', fontWeight: 700 }}>{t('netProfit', lang)}</span>
-          <span style={{ fontSize: '22px', fontWeight: 700, color: netProfit >= 0 ? 'var(--success)' : 'var(--danger)' }}>
+          <span style={{ fontSize: '14px', fontWeight: 800 }}>{t('netProfit', lang)}</span>
+          <span style={{ fontSize: '22px', fontWeight: 800, color: netProfit >= 0 ? 'var(--success)' : 'var(--danger)' }}>
             {netProfit.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: 400 }}>{t('kwd', lang)}</span>
           </span>
         </div>
       </div>
 
       {/* Shares */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '14px', border: '1px solid var(--border)', marginBottom: '14px' }}>
-        <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>{t('profitDist', lang)}</div>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '16px', border: '1px solid var(--border)', marginBottom: '14px', boxShadow: 'var(--shadow-sm)' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, marginBottom: '10px' }}>{t('profitDist', lang)}</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          <div style={{ background: 'var(--bg)', borderRadius: '10px', padding: '12px', textAlign: 'center', borderTop: '3px solid var(--primary)' }}>
-            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--primary)' }}>{shareReda.toLocaleString()}</div>
+          <div style={{ background: 'var(--bg)', borderRadius: '12px', padding: '14px', textAlign: 'center', borderTop: '3px solid var(--primary)' }}>
+            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>{shareReda.toLocaleString()}</div>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>{t('kwd', lang)}</div>
-            <div style={{ fontSize: '12px', fontWeight: 600, marginTop: '4px' }}>{t('shareReda', lang)}</div>
+            <div style={{ fontSize: '12px', fontWeight: 700, marginTop: '4px' }}>{t('shareReda', lang)}</div>
           </div>
-          <div style={{ background: 'var(--bg)', borderRadius: '10px', padding: '12px', textAlign: 'center', borderTop: '3px solid var(--accent)' }}>
-            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--accent)' }}>{shareAbbas.toLocaleString()}</div>
+          <div style={{ background: 'var(--bg)', borderRadius: '12px', padding: '14px', textAlign: 'center', borderTop: '3px solid var(--accent)' }}>
+            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent)' }}>{shareAbbas.toLocaleString()}</div>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>{t('kwd', lang)}</div>
-            <div style={{ fontSize: '12px', fontWeight: 600, marginTop: '4px' }}>{t('shareAbbas', lang)}</div>
+            <div style={{ fontSize: '12px', fontWeight: 700, marginTop: '4px' }}>{t('shareAbbas', lang)}</div>
           </div>
         </div>
       </div>
 
       {/* Add Expense */}
       <button onClick={() => { setEditExpense(null); setShowForm(true); }} style={{
-        width: '100%', padding: '10px', borderRadius: '10px', border: '1px dashed var(--border)',
-        background: 'var(--bg-card)', color: 'var(--primary)', fontSize: '13px', fontWeight: 600,
+        width: '100%', padding: '11px', borderRadius: '12px', border: '1px dashed var(--border)',
+        background: 'var(--bg-card)', color: 'var(--primary)', fontSize: '13px', fontWeight: 700,
         cursor: 'pointer', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
       }}>
         <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
@@ -197,7 +198,7 @@ function StatementSection({ lang, months }: { lang: import('@/lib/i18n').Lang; m
           onCancel={() => { setShowForm(false); setEditExpense(null); }}
         />
       )}
-    </>
+    </div>
   );
 }
 
@@ -226,23 +227,26 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
   const apartments = getApartments();
 
   const selectStyle: React.CSSProperties = {
-    padding: '8px 10px', borderRadius: '8px',
+    padding: '9px 12px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg-card)',
     color: 'var(--text)', fontSize: '13px', outline: 'none',
+    boxShadow: 'var(--shadow-sm)',
   };
 
   return (
-    <>
+    <div style={{ animation: 'fadeInUp 0.3s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{months[selectedMonth]} {selectedYear}</div>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>{months[selectedMonth]} {selectedYear}</div>
         <div style={{ display: 'flex', gap: '6px' }}>
           <button onClick={() => printMonthlyStatement(tenants, monthPayments, monthsAr[selectedMonth], selectedYear)} style={{
             background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
-            borderRadius: '8px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer',
+            borderRadius: '10px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
+            boxShadow: 'var(--shadow-sm)',
           }}>{t('monthlyStatement', lang)}</button>
           <button onClick={() => setShowForm(true)} style={{
-            background: 'var(--primary)', color: '#fff', border: 'none',
-            borderRadius: '8px', padding: '7px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+            background: 'var(--gradient-primary)', color: '#fff', border: 'none',
+            borderRadius: '10px', padding: '7px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
           }}>{t('newReceipt', lang)}</button>
         </div>
       </div>
@@ -264,11 +268,11 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
       </div>
 
       {/* Progress */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '10px 14px', border: '1px solid var(--border)', marginBottom: '12px' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '12px 14px', border: '1px solid var(--border)', marginBottom: '12px', boxShadow: 'var(--shadow-sm)' }}>
         <div style={{ height: '6px', background: 'var(--bg)', borderRadius: '3px', overflow: 'hidden' }}>
-          <div style={{ height: '100%', borderRadius: '3px', width: `${rate}%`, background: rate >= 80 ? 'var(--success)' : rate >= 50 ? 'var(--warning)' : 'var(--danger)' }} />
+          <div style={{ height: '100%', borderRadius: '3px', width: `${rate}%`, background: rate >= 80 ? 'var(--success)' : rate >= 50 ? 'var(--warning)' : 'var(--danger)', transition: 'width 0.3s ease' }} />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginTop: '4px', color: 'var(--text-muted)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginTop: '5px', color: 'var(--text-muted)', fontWeight: 500 }}>
           <span>{paidTenantIds.size} {t('paid', lang)}</span>
           <span>{unpaidTenants.length} {t('unpaid', lang)}</span>
         </div>
@@ -276,8 +280,8 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
 
       {/* Recorded Payments */}
       {monthPayments.length > 0 && (
-        <div style={{ background: 'var(--bg-card)', borderRadius: '10px', border: '1px solid var(--border)', overflow: 'hidden', marginBottom: '12px' }}>
-          <div style={{ padding: '10px 14px', fontWeight: 600, fontSize: '13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', marginBottom: '12px', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ padding: '12px 14px', fontWeight: 700, fontSize: '13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
             <span>{t('recordedPayments', lang)} ({monthPayments.length})</span>
             <span style={{ color: 'var(--success)' }}>{totalCollected} {t('kwd', lang)}</span>
           </div>
@@ -287,20 +291,20 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
             return (
               <div key={p.id} style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontWeight: 500, fontSize: '13px' }}>{tenant?.name || '-'}</div>
+                  <div style={{ fontWeight: 600, fontSize: '13px' }}>{tenant?.name || '-'}</div>
                   <div style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{t('apt', lang)} {apt?.number} — {p.method} — {p.date}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ fontWeight: 700, color: 'var(--success)', fontSize: '13px' }}>{p.amount} {t('kwd', lang)}</span>
                   {tenant && (
                     <button onClick={() => printReceipt(tenant, p)} style={{
-                      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
-                      padding: '3px 6px', cursor: 'pointer', fontSize: '11px', color: 'var(--text-muted)',
+                      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
+                      padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600,
                     }}>{t('print', lang)}</button>
                   )}
                   <button onClick={() => { if (confirm('حذف هذا الوصل؟')) { deletePayment(p.id); reload(); showToast('تم حذف الوصل'); } }} style={{
-                    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
-                    padding: '3px 6px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)',
+                    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
+                    padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)', fontWeight: 600,
                   }}>{t('delete', lang)}</button>
                 </div>
               </div>
@@ -311,8 +315,8 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
 
       {/* Unpaid */}
       {unpaidTenants.length > 0 && (
-        <div style={{ background: 'var(--bg-card)', borderRadius: '10px', border: '1px solid var(--border)', overflow: 'hidden', borderInlineStart: '3px solid var(--danger)' }}>
-          <div style={{ padding: '10px 14px', fontWeight: 600, fontSize: '13px', borderBottom: '1px solid var(--border)', color: 'var(--danger)', display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', borderInlineStart: '3px solid var(--danger)', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ padding: '12px 14px', fontWeight: 700, fontSize: '13px', borderBottom: '1px solid var(--border)', color: 'var(--danger)', display: 'flex', justifyContent: 'space-between' }}>
             <span>{t('notPaid', lang)} ({unpaidTenants.length})</span>
             <span>{remaining.toLocaleString()} {t('kwd', lang)}</span>
           </div>
@@ -321,15 +325,15 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
             return (
               <div key={tt.id} style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontWeight: 500, fontSize: '13px' }}>{tt.name}</div>
+                  <div style={{ fontWeight: 600, fontSize: '13px' }}>{tt.name}</div>
                   <div style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{t('apt', lang)} {apt?.number} — {tt.floor}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontWeight: 600, color: 'var(--danger)', fontSize: '13px' }}>{tt.rentAmount} {t('kwd', lang)}</span>
+                  <span style={{ fontWeight: 700, color: 'var(--danger)', fontSize: '13px' }}>{tt.rentAmount} {t('kwd', lang)}</span>
                   {tt.phone && (
                     <a href={`https://wa.me/965${tt.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`السلام عليكم ${tt.name}،\nهذا تذكير بدفع إيجار شقة ${apt?.number || ''} بمبلغ ${tt.rentAmount} د.ك عن شهر ${months[selectedMonth]} ${selectedYear}.\nشكراً لتعاونكم.`)}`} target="_blank" rel="noopener noreferrer" style={{
-                      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
-                      padding: '3px 6px', fontSize: '11px', color: 'var(--success)', textDecoration: 'none',
+                      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
+                      padding: '4px 8px', fontSize: '11px', color: 'var(--success)', textDecoration: 'none', fontWeight: 600,
                     }}>{t('whatsapp', lang)}</a>
                   )}
                 </div>
@@ -347,7 +351,7 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
           onCancel={() => setShowForm(false)}
         />
       )}
-    </>
+    </div>
   );
 }
 
@@ -407,19 +411,21 @@ function ContractsSection({ lang }: { lang: import('@/lib/i18n').Lang }) {
 
   return (
     <>
-      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '10px' }}>
+      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '10px', fontWeight: 500, animation: 'fadeInUp 0.3s ease-out' }}>
         {counts.active} {t('active', lang)} — {counts.expiring} {t('expiringSoon', lang)} — {counts.expired} {t('expired', lang)}
       </div>
 
-      <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ display: 'flex', gap: '6px', marginBottom: '14px', overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
         {filters.map(f => (
           <button key={f.id} onClick={() => setFilter(f.id)} style={{
-            padding: '6px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: 600,
+            padding: '7px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 700,
             whiteSpace: 'nowrap', border: '1px solid',
             background: filter === f.id ? f.color : 'var(--bg-card)',
             color: filter === f.id ? '#fff' : f.color,
             borderColor: filter === f.id ? f.color : 'var(--border)',
             cursor: 'pointer',
+            boxShadow: filter === f.id ? `0 2px 8px ${f.color}40` : 'none',
+            transition: 'all 0.2s ease',
           }}>
             {f.label} ({counts[f.id]})
           </button>
@@ -435,13 +441,14 @@ function ContractsSection({ lang }: { lang: import('@/lib/i18n').Lang }) {
 
           return (
             <div key={tt.id} style={{
-              background: 'var(--bg-card)', borderRadius: '10px',
+              background: 'var(--bg-card)', borderRadius: '16px',
               border: '1px solid var(--border)', overflow: 'hidden',
+              boxShadow: 'var(--shadow-sm)',
             }}>
               <div style={{ padding: '12px 14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <div>
-                    <div style={{ fontWeight: 600, fontSize: '14px' }}>{tt.name}</div>
+                    <div style={{ fontWeight: 700, fontSize: '14px' }}>{tt.name}</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{t('apt', lang)} {apt?.number} — {tt.floor}</div>
                   </div>
                   <span style={{ color: info.color, fontSize: '11px', fontWeight: 700 }}>{info.label}</span>
@@ -468,19 +475,20 @@ function ContractsSection({ lang }: { lang: import('@/lib/i18n').Lang }) {
                 )}
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-light)', paddingTop: '8px' }}>
-                  <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '14px' }}>
+                  <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '14px' }}>
                     {tt.rentAmount} <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>{t('kwd', lang)}</span>
                   </span>
                   <div style={{ display: 'flex', gap: '6px' }}>
                     {(cat === 'expired' || cat === 'expiring' || cat === 'no-contract') && (
                       <button onClick={() => setRenewingTenant(tt)} style={{
-                        background: 'var(--success)', border: 'none', borderRadius: '6px',
-                        padding: '5px 10px', cursor: 'pointer', fontSize: '12px', color: '#fff', fontWeight: 600,
+                        background: 'var(--gradient-success)', border: 'none', borderRadius: '10px',
+                        padding: '6px 12px', cursor: 'pointer', fontSize: '12px', color: '#fff', fontWeight: 700,
+                        boxShadow: '0 2px 6px rgba(13,159,110,0.25)',
                       }}>تجديد</button>
                     )}
                     <button onClick={() => printContract(tt)} style={{
-                      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
-                      padding: '5px 10px', cursor: 'pointer', fontSize: '12px', color: 'var(--primary)', fontWeight: 600,
+                      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '10px',
+                      padding: '6px 12px', cursor: 'pointer', fontSize: '12px', color: 'var(--primary)', fontWeight: 700,
                     }}>{t('printContract', lang)}</button>
                   </div>
                 </div>
@@ -513,40 +521,45 @@ function RenewContractForm({ tenant, lang, onRenew, onCancel }: {
   const [end, setEnd] = useState(nextYear);
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px',
+    width: '100%', padding: '12px 14px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg)',
     color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
-    direction: 'ltr' as const,
+    direction: 'ltr' as const, transition: 'border-color 0.2s',
   };
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 100,
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease-out',
     }} onClick={onCancel}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg-card)', borderRadius: '16px 16px 0 0', width: '100%',
-        maxWidth: '500px', padding: '20px',
+        background: 'var(--bg-card)', borderRadius: '20px 20px 0 0', width: '100%',
+        maxWidth: '500px', padding: '24px 20px',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.15)',
+        animation: 'fadeInUp 0.3s ease-out',
       }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 4px' }}>تجديد العقد</h2>
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '14px' }}>{tenant.name}</p>
+        <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'var(--border)', margin: '0 auto 16px' }} />
+        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: '0 0 4px' }}>تجديد العقد</h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>{tenant.name}</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div>
-            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', display: 'block' }}>{t('leaseStart', lang)}</label>
+            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontWeight: 600 }}>{t('leaseStart', lang)}</label>
             <input style={inputStyle} type="date" value={start} onChange={e => setStart(e.target.value)} />
           </div>
           <div>
-            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', display: 'block' }}>{t('leaseEnd', lang)}</label>
+            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontWeight: 600 }}>{t('leaseEnd', lang)}</label>
             <input style={inputStyle} type="date" value={end} onChange={e => setEnd(e.target.value)} />
           </div>
-          <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <button onClick={() => onRenew(tenant, start, end)} style={{
-              flex: 1, padding: '11px', borderRadius: '8px', border: 'none',
-              background: 'var(--success)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              flex: 1, padding: '12px', borderRadius: '12px', border: 'none',
+              background: 'var(--gradient-success)', color: '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(13,159,110,0.25)',
             }}>تجديد</button>
             <button onClick={onCancel} style={{
-              padding: '11px 20px', borderRadius: '8px', border: '1px solid var(--border)',
-              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer',
+              padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)',
+              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer', fontWeight: 500,
             }}>{t('cancel', lang)}</button>
           </div>
         </div>
@@ -568,9 +581,9 @@ function ExpRow({ label, value, color, l }: { label: string; value: number; colo
 
 function StatBox({ label, value, color, l, isText }: { label: string; value: number | string; color: string; l: import('@/lib/i18n').Lang; isText?: boolean }) {
   return (
-    <div style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '10px', textAlign: 'center', border: '1px solid var(--border)' }}>
-      <div style={{ fontSize: '18px', fontWeight: 700, color }}>{isText ? value : (typeof value === 'number' ? value.toLocaleString() : value)}</div>
-      <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{label}</div>
+    <div style={{ background: 'var(--bg-card)', borderRadius: '14px', padding: '12px', textAlign: 'center', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+      <div style={{ fontSize: '18px', fontWeight: 800, color }}>{isText ? value : (typeof value === 'number' ? value.toLocaleString() : value)}</div>
+      <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>{label}</div>
     </div>
   );
 }
@@ -581,26 +594,26 @@ function ExpenseList({ title, items, total, color, lang, onEdit, onDelete }: {
 }) {
   if (items.length === 0) return null;
   return (
-    <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden', marginBottom: '10px' }}>
-      <div style={{ padding: '10px 14px', fontWeight: 600, fontSize: '13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
+    <div style={{ background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', marginBottom: '10px', boxShadow: 'var(--shadow-sm)' }}>
+      <div style={{ padding: '12px 14px', fontWeight: 700, fontSize: '13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
         <span>{title}</span>
         <span style={{ color }}>{total.toLocaleString()} {t('kwd', lang)}</span>
       </div>
       {items.map(e => (
-        <div key={e.id} style={{ padding: '8px 14px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div key={e.id} style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontWeight: 500, fontSize: '13px' }}>{e.description}</div>
+            <div style={{ fontWeight: 600, fontSize: '13px' }}>{e.description}</div>
             <div style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{e.date}{e.notes ? ` — ${e.notes}` : ''}</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontWeight: 600, color, fontSize: '13px' }}>{e.amount} {t('kwd', lang)}</span>
+            <span style={{ fontWeight: 700, color, fontSize: '13px' }}>{e.amount} {t('kwd', lang)}</span>
             <button onClick={() => onEdit(e)} style={{
-              background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
-              padding: '3px 6px', cursor: 'pointer', fontSize: '11px', color: 'var(--primary)',
+              background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
+              padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--primary)', fontWeight: 600,
             }}>{t('edit', lang)}</button>
             <button onClick={() => { if (confirm('حذف؟')) { onDelete(e.id); showToast('تم الحذف'); } }} style={{
-              background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px',
-              padding: '3px 6px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)',
+              background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
+              padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)', fontWeight: 600,
             }}>{t('delete', lang)}</button>
           </div>
         </div>
@@ -625,21 +638,26 @@ function ExpenseForm({ expense, month, year, lang, onSave, onCancel }: {
   };
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px',
+    width: '100%', padding: '12px 14px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg)',
     color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+    transition: 'border-color 0.2s',
   };
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 100,
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease-out',
     }} onClick={onCancel}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg-card)', borderRadius: '16px 16px 0 0', width: '100%',
-        maxWidth: '500px', padding: '20px', maxHeight: '85vh', overflowY: 'auto',
+        background: 'var(--bg-card)', borderRadius: '20px 20px 0 0', width: '100%',
+        maxWidth: '500px', padding: '24px 20px', maxHeight: '85vh', overflowY: 'auto',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.15)',
+        animation: 'fadeInUp 0.3s ease-out',
       }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 14px' }}>{expense ? t('editExpense', lang) : t('addExpense', lang)}</h2>
+        <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'var(--border)', margin: '0 auto 16px' }} />
+        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: '0 0 16px' }}>{expense ? t('editExpense', lang) : t('addExpense', lang)}</h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <select style={inputStyle} value={type} onChange={e => setType(e.target.value as Expense['type'])}>
             <option value="general">{t('generalExpenses', lang)}</option>
@@ -652,14 +670,15 @@ function ExpenseForm({ expense, month, year, lang, onSave, onCancel }: {
             <input style={{ ...inputStyle, direction: 'ltr' }} type="date" value={date} onChange={e => setDate(e.target.value)} required />
           </div>
           <textarea style={{ ...inputStyle, minHeight: '40px', resize: 'vertical' }} value={notes} onChange={e => setNotes(e.target.value)} placeholder={t('notes', lang)} />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <button type="submit" style={{
-              flex: 1, padding: '11px', borderRadius: '8px', border: 'none',
-              background: 'var(--primary)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              flex: 1, padding: '12px', borderRadius: '12px', border: 'none',
+              background: 'var(--gradient-primary)', color: '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
             }}>{expense ? t('update', lang) : t('add', lang)}</button>
             <button type="button" onClick={onCancel} style={{
-              padding: '11px 20px', borderRadius: '8px', border: '1px solid var(--border)',
-              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer',
+              padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)',
+              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer', fontWeight: 500,
             }}>{t('cancel', lang)}</button>
           </div>
         </form>
@@ -689,21 +708,26 @@ function PaymentForm({ tenants, lang, onSave, onCancel }: { tenants: Tenant[]; l
   };
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px',
+    width: '100%', padding: '12px 14px', borderRadius: '12px',
     border: '1px solid var(--border)', background: 'var(--bg)',
     color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+    transition: 'border-color 0.2s',
   };
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 100,
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease-out',
     }} onClick={onCancel}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg-card)', borderRadius: '16px 16px 0 0', width: '100%',
-        maxWidth: '500px', padding: '20px',
+        background: 'var(--bg-card)', borderRadius: '20px 20px 0 0', width: '100%',
+        maxWidth: '500px', padding: '24px 20px',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.15)',
+        animation: 'fadeInUp 0.3s ease-out',
       }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 14px' }}>{t('rentReceipt', lang)}</h2>
+        <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'var(--border)', margin: '0 auto 16px' }} />
+        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: '0 0 16px' }}>{t('rentReceipt', lang)}</h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <select style={inputStyle} value={tenantId} onChange={e => {
             setTenantId(e.target.value);
@@ -715,7 +739,7 @@ function PaymentForm({ tenants, lang, onSave, onCancel }: { tenants: Tenant[]; l
           </select>
 
           {selectedTenant && (
-            <div style={{ background: 'var(--bg)', padding: '8px 12px', borderRadius: '8px', fontSize: '12px', display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ background: 'var(--bg)', padding: '10px 14px', borderRadius: '12px', fontSize: '12px', display: 'flex', justifyContent: 'space-between' }}>
               <span>{t('apt', lang)} {apartments.find(a => a.id === selectedTenant.apartmentId)?.number} — {selectedTenant.floor}</span>
               <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{selectedTenant.rentAmount} {t('kwd', lang)}</span>
             </div>
@@ -734,14 +758,15 @@ function PaymentForm({ tenants, lang, onSave, onCancel }: { tenants: Tenant[]; l
 
           <textarea style={{ ...inputStyle, minHeight: '40px', resize: 'vertical' }} value={notes} onChange={e => setNotes(e.target.value)} placeholder={t('notes', lang)} />
 
-          <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <button type="submit" style={{
-              flex: 1, padding: '11px', borderRadius: '8px', border: 'none',
-              background: 'var(--primary)', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+              flex: 1, padding: '12px', borderRadius: '12px', border: 'none',
+              background: 'var(--gradient-primary)', color: '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
             }}>{t('register', lang)}</button>
             <button type="button" onClick={onCancel} style={{
-              padding: '11px 20px', borderRadius: '8px', border: '1px solid var(--border)',
-              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer',
+              padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)',
+              background: 'var(--bg)', color: 'var(--text)', fontSize: '14px', cursor: 'pointer', fontWeight: 500,
             }}>{t('cancel', lang)}</button>
           </div>
         </form>
