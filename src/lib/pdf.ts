@@ -665,20 +665,20 @@ export function printAllReceipts(
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif; color: #000; direction: rtl; font-size: 12px; }
-  .page { width: 100%; display: flex; flex-direction: column; }
-  .receipt { height: 138mm; padding: 15px 25px; overflow: hidden; box-sizing: border-box; }
-  .divider { border-top: 1px dashed #999; margin: 0; }
+  .page { width: 100%; height: 277mm; overflow: hidden; }
+  .receipt { height: 136mm; padding: 12px 25px; overflow: hidden; box-sizing: border-box; }
+  .divider { border-top: 1px dashed #999; margin: 2mm 0; }
   table { width: 100%; border-collapse: collapse; }
-  .header-table td { border: none; padding: 3px 6px; }
-  .main-table td, .main-table th { border: 1.5px solid #000; padding: 5px 8px; vertical-align: middle; }
+  .header-table td { border: none; padding: 2px 6px; }
+  .main-table td, .main-table th { border: 1.5px solid #000; padding: 4px 8px; vertical-align: middle; }
   .lbl { font-weight: 700; white-space: nowrap; width: 1%; font-size: 12px; }
   .val { min-width: 60px; }
-  .amount-box { border: 2px solid #000; padding: 3px 10px; display: inline-block; min-width: 50px; text-align: center; font-weight: 700; font-size: 14px; }
+  .amount-box { border: 2px solid #000; padding: 2px 10px; display: inline-block; min-width: 50px; text-align: center; font-weight: 700; font-size: 14px; }
   @media print {
-    body { padding: 0; }
-    .page { page-break-after: always; page-break-inside: avoid; }
+    body { padding: 0; margin: 0; }
+    .page { page-break-after: always; }
     .page:last-child { page-break-after: avoid; }
-    @page { size: A4; margin: 8mm; }
+    @page { size: A4; margin: 10mm; }
   }
 </style></head><body>
 ${pages.join('')}
