@@ -667,7 +667,7 @@ export function printAllReceipts(
   body { font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif; color: #000; direction: rtl; font-size: 12px; }
   .page { width: 100%; }
   .receipt { padding: 10px 20px; box-sizing: border-box; }
-  .divider { border-top: 1px dashed #999; margin: 3mm 0; }
+  .divider { border-top: 1px dashed #999; margin: 12mm 0; }
   table { width: 100%; border-collapse: collapse; }
   .header-table td { border: none; padding: 2px 6px; }
   .main-table td, .main-table th { border: 1.5px solid #000; padding: 3px 6px; vertical-align: middle; }
