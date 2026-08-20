@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Expense, Payment, Tenant } from '@/lib/types';
 import { getTenants, getExpenses, addExpense, updateExpense, deleteExpense, getPayments, addPayment, deletePayment, getApartments, updateTenant, generateId } from '@/lib/store';
-import { printFinancialStatement, printReceipt, printMonthlyStatement, printContract } from '@/lib/pdf';
+import { printFinancialStatement, printReceipt, printMonthlyStatement, printContract, printAllReceipts } from '@/lib/pdf';
 import { getLang, t, getMonths, monthsAr } from '@/lib/i18n';
 import { showToast } from './Toast';
 
@@ -237,12 +237,17 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
     <div style={{ animation: 'fadeInUp 0.3s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
         <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>{months[selectedMonth]} {selectedYear}</div>
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button onClick={() => printMonthlyStatement(tenants, monthPayments, monthsAr[selectedMonth], selectedYear)} style={{
             background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
             borderRadius: '10px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
             boxShadow: 'var(--shadow-sm)',
           }}>{t('monthlyStatement', lang)}</button>
+          <button onClick={() => printAllReceipts(tenants, monthPayments, monthsAr[selectedMonth], selectedYear)} style={{
+            background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
+            borderRadius: '10px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
+            boxShadow: 'var(--shadow-sm)',
+          }}>طباعة جميع الوصولات</button>
           <button onClick={() => setShowForm(true)} style={{
             background: 'var(--gradient-primary)', color: '#fff', border: 'none',
             borderRadius: '10px', padding: '7px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
