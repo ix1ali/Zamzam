@@ -665,9 +665,8 @@ export function printAllReceipts(
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif; color: #000; direction: rtl; font-size: 12px; }
-  .page { width: 100%; height: 100vh; display: flex; flex-direction: column; }
-  .receipt { flex: 1; padding: 20px 30px; display: flex; flex-direction: column; justify-content: center; }
-  .receipt.empty { }
+  .page { width: 100%; display: flex; flex-direction: column; }
+  .receipt { height: 138mm; padding: 15px 25px; overflow: hidden; box-sizing: border-box; }
   .divider { border-top: 1px dashed #999; margin: 0; }
   table { width: 100%; border-collapse: collapse; }
   .header-table td { border: none; padding: 3px 6px; }
@@ -677,7 +676,7 @@ export function printAllReceipts(
   .amount-box { border: 2px solid #000; padding: 3px 10px; display: inline-block; min-width: 50px; text-align: center; font-weight: 700; font-size: 14px; }
   @media print {
     body { padding: 0; }
-    .page { page-break-after: always; height: 100vh; }
+    .page { page-break-after: always; page-break-inside: avoid; }
     .page:last-child { page-break-after: avoid; }
     @page { size: A4; margin: 8mm; }
   }
