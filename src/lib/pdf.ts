@@ -128,9 +128,9 @@ export function printReceipt(tenant: Tenant, payment: Payment) {
     <td style="padding:0">
       <table style="width:100%;border:none">
         <tr>
-          <td style="border:none;border-left:1.5px solid #000;width:50%">${!isCash ? (payment.notes || '') : ''}</td>
-          <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:11px">على بنك</td>
-          <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:11px">Cash / Cheque No</td>
+          <td style="border:none;border-left:1px solid #999;width:50%">${!isCash ? (payment.notes || '') : ''}</td>
+          <td style="border:none;border-left:1px solid #999;width:15%;text-align:center;font-size:11px">على بنك</td>
+          <td style="border:none;border-left:1px solid #999;width:15%;text-align:center;font-size:11px">Cash / Cheque No</td>
           <td style="border:none;width:20%;text-align:center;font-weight:700">${isCash ? 'نقدا' : payment.method}</td>
         </tr>
       </table>
@@ -580,7 +580,7 @@ export function printAllReceipts(
         <div>عقار / رضا و عباس السلمان</div>
       </td>
       <td style="text-align:center;width:30%">
-        <div style="font-weight:700;font-size:15px;color:#c00">وصل ايجار</div>
+        <div style="font-weight:700;font-size:15px;color:#c77">وصل ايجار</div>
         <div style="font-size:10px">Rent Voucher</div>
       </td>
       <td style="text-align:left;width:35%;font-size:9px;line-height:1.3">
@@ -599,7 +599,7 @@ export function printAllReceipts(
       </td>
       <td style="text-align:left;width:50%">
         <span style="font-weight:700;font-size:12px">${payDate}</span>
-        <span style="font-weight:700;margin-right:4px;border:1.5px solid #000;padding:1px 6px;font-size:11px">التاريخ</span>
+        <span style="font-weight:700;margin-right:4px;border:1px solid #999;padding:1px 6px;font-size:11px">التاريخ</span>
       </td>
     </tr>
   </table>
@@ -619,9 +619,9 @@ export function printAllReceipts(
       <td style="padding:0">
         <table style="width:100%;border:none">
           <tr>
-            <td style="border:none;border-left:1.5px solid #000;width:50%">${!isCash && pmt ? (pmt.notes || '') : ''}</td>
-            <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:9px">على بنك</td>
-            <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:9px">Cash / Cheque No</td>
+            <td style="border:none;border-left:1px solid #999;width:50%">${!isCash && pmt ? (pmt.notes || '') : ''}</td>
+            <td style="border:none;border-left:1px solid #999;width:15%;text-align:center;font-size:9px">على بنك</td>
+            <td style="border:none;border-left:1px solid #999;width:15%;text-align:center;font-size:9px">Cash / Cheque No</td>
             <td style="border:none;width:20%;text-align:center;font-weight:700">${isCash ? 'نقدا' : method}</td>
           </tr>
         </table>
@@ -664,16 +664,16 @@ export function printAllReceipts(
 <title>جميع الوصولات - ${month} ${year}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif; color: #000; direction: rtl; font-size: 12px; }
+  body { font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif; color: #555; direction: rtl; font-size: 12px; }
   .page { width: 100%; }
   .receipt { padding: 10px 20px; box-sizing: border-box; }
-  .divider { border-top: 1px dashed #999; margin: 12mm 0; }
+  .divider { border-top: 1px dashed #bbb; margin: 12mm 0; }
   table { width: 100%; border-collapse: collapse; }
   .header-table td { border: none; padding: 2px 6px; }
-  .main-table td, .main-table th { border: 1.5px solid #000; padding: 3px 6px; vertical-align: middle; }
+  .main-table td, .main-table th { border: 1px solid #999; padding: 3px 6px; vertical-align: middle; }
   .lbl { font-weight: 700; white-space: nowrap; width: 1%; font-size: 11px; }
   .val { min-width: 60px; }
-  .amount-box { border: 1.5px solid #000; padding: 2px 8px; display: inline-block; min-width: 40px; text-align: center; font-weight: 700; font-size: 12px; }
+  .amount-box { border: 1px solid #999; padding: 2px 8px; display: inline-block; min-width: 40px; text-align: center; font-weight: 700; font-size: 12px; }
   @media print {
     body { padding: 0; margin: 0; }
     .page { page-break-after: always; }
