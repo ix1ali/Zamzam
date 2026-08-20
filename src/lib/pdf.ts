@@ -573,55 +573,55 @@ export function printAllReceipts(
     const method = pmt ? pmt.method : '';
 
     return `<div class="receipt">
-  <table class="header-table" style="margin-bottom:8px;width:100%">
+  <table class="header-table" style="margin-bottom:4px;width:100%">
     <tr>
-      <td style="text-align:right;width:35%;font-size:11px;line-height:1.5">
-        <div style="font-weight:700;font-size:13px">شركة جوهرة السلمان العقارية</div>
+      <td style="text-align:right;width:35%;font-size:10px;line-height:1.3">
+        <div style="font-weight:700;font-size:12px">شركة جوهرة السلمان العقارية</div>
         <div>عقار / رضا و عباس السلمان</div>
       </td>
       <td style="text-align:center;width:30%">
-        <div style="font-weight:700;font-size:17px;color:#c00">وصل ايجار</div>
-        <div style="font-size:11px">Rent Voucher</div>
+        <div style="font-weight:700;font-size:15px;color:#c00">وصل ايجار</div>
+        <div style="font-size:10px">Rent Voucher</div>
       </td>
-      <td style="text-align:left;width:35%;font-size:10px;line-height:1.5">
-        <div style="font-weight:700;font-size:11px">Jawhart Al-Salman Real Estate Company</div>
+      <td style="text-align:left;width:35%;font-size:9px;line-height:1.3">
+        <div style="font-weight:700;font-size:10px">Jawhart Al-Salman Real Estate Company</div>
         <div>Real Estate / Redha, Abbas AlSalman</div>
       </td>
     </tr>
   </table>
-  <table class="header-table" style="margin-bottom:8px;width:100%">
+  <table class="header-table" style="margin-bottom:4px;width:100%">
     <tr>
       <td style="text-align:right;width:50%">
-        <span class="amount-box" style="margin-left:3px">${fils || ''}</span>
-        <span style="font-weight:700;margin:0 3px">فلس</span>
-        <span class="amount-box" style="margin-left:3px">${dinar}</span>
-        <span style="font-weight:700;margin:0 3px">دينار</span>
+        <span class="amount-box">${fils || ''}</span>
+        <span style="font-weight:700;margin:0 2px;font-size:11px">فلس</span>
+        <span class="amount-box">${dinar}</span>
+        <span style="font-weight:700;margin:0 2px;font-size:11px">دينار</span>
       </td>
       <td style="text-align:left;width:50%">
-        <span style="font-weight:700;font-size:13px">${payDate}</span>
-        <span style="font-weight:700;margin-right:6px;border:2px solid #000;padding:2px 8px">التاريخ</span>
+        <span style="font-weight:700;font-size:12px">${payDate}</span>
+        <span style="font-weight:700;margin-right:4px;border:1.5px solid #000;padding:1px 6px;font-size:11px">التاريخ</span>
       </td>
     </tr>
   </table>
   <table class="main-table">
     <tr>
-      <td class="lbl" style="text-align:left;font-size:10px">Received From</td>
-      <td class="val" style="font-weight:700;font-size:13px">${tenant.name}</td>
+      <td class="lbl" style="text-align:left;font-size:9px">Received From</td>
+      <td class="val" style="font-weight:700;font-size:12px">${tenant.name}</td>
       <td class="lbl">وصلنا من السيد / السادة</td>
     </tr>
     <tr>
-      <td class="lbl" style="text-align:left;font-size:10px">The Sum of K.D</td>
-      <td class="val" style="font-size:11px">${amountWords}</td>
+      <td class="lbl" style="text-align:left;font-size:9px">The Sum of K.D</td>
+      <td class="val" style="font-size:10px">${amountWords}</td>
       <td class="lbl">مبلغ وقدره</td>
     </tr>
     <tr>
-      <td class="lbl" style="text-align:left;font-size:10px">Bank</td>
+      <td class="lbl" style="text-align:left;font-size:9px">Bank</td>
       <td style="padding:0">
         <table style="width:100%;border:none">
           <tr>
             <td style="border:none;border-left:1.5px solid #000;width:50%">${!isCash && pmt ? (pmt.notes || '') : ''}</td>
-            <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:10px">على بنك</td>
-            <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:10px">Cash / Cheque No</td>
+            <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:9px">على بنك</td>
+            <td style="border:none;border-left:1.5px solid #000;width:15%;text-align:center;font-size:9px">Cash / Cheque No</td>
             <td style="border:none;width:20%;text-align:center;font-weight:700">${isCash ? 'نقدا' : method}</td>
           </tr>
         </table>
@@ -629,19 +629,19 @@ export function printAllReceipts(
       <td class="lbl">نقدا / شيك رقم</td>
     </tr>
     <tr>
-      <td class="lbl" style="text-align:left;font-size:10px">Of Rent</td>
-      <td class="val" style="font-weight:700;font-size:13px">${apt?.number || '-'}</td>
+      <td class="lbl" style="text-align:left;font-size:9px">Of Rent</td>
+      <td class="val" style="font-weight:700;font-size:12px">${apt?.number || '-'}</td>
       <td class="lbl">وذلك عن ايجار</td>
     </tr>
     <tr>
-      <td class="lbl" style="text-align:left;font-size:10px">Month Of</td>
+      <td class="lbl" style="text-align:left;font-size:9px">Month Of</td>
       <td class="val" style="font-weight:700">${month} ${year}</td>
       <td class="lbl">عن شهر</td>
     </tr>
   </table>
-  <div style="margin-top:20px;text-align:right;padding-right:30px">
-    <div style="font-weight:700;font-size:13px">توقيع المستلم</div>
-    <div style="margin-top:4px;font-size:14px;letter-spacing:3px">..............................</div>
+  <div style="margin-top:8px;text-align:right;padding-right:30px">
+    <div style="font-weight:700;font-size:12px">توقيع المستلم</div>
+    <div style="margin-top:2px;font-size:13px;letter-spacing:3px">..............................</div>
   </div>
 </div>`;
   };
@@ -666,14 +666,14 @@ export function printAllReceipts(
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif; color: #000; direction: rtl; font-size: 12px; }
   .page { width: 100%; }
-  .receipt { height: 130mm; padding: 12px 25px; overflow: hidden; box-sizing: border-box; }
-  .divider { border-top: 1px dashed #999; margin: 1mm 0; }
+  .receipt { padding: 10px 20px; box-sizing: border-box; }
+  .divider { border-top: 1px dashed #999; margin: 3mm 0; }
   table { width: 100%; border-collapse: collapse; }
   .header-table td { border: none; padding: 2px 6px; }
-  .main-table td, .main-table th { border: 1.5px solid #000; padding: 4px 8px; vertical-align: middle; }
-  .lbl { font-weight: 700; white-space: nowrap; width: 1%; font-size: 12px; }
+  .main-table td, .main-table th { border: 1.5px solid #000; padding: 3px 6px; vertical-align: middle; }
+  .lbl { font-weight: 700; white-space: nowrap; width: 1%; font-size: 11px; }
   .val { min-width: 60px; }
-  .amount-box { border: 2px solid #000; padding: 2px 10px; display: inline-block; min-width: 50px; text-align: center; font-weight: 700; font-size: 14px; }
+  .amount-box { border: 1.5px solid #000; padding: 2px 8px; display: inline-block; min-width: 40px; text-align: center; font-weight: 700; font-size: 12px; }
   @media print {
     body { padding: 0; margin: 0; }
     .page { page-break-after: always; }
