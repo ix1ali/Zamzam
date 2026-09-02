@@ -174,6 +174,7 @@ const s: Record<string, { en: string; ar: string }> = {
   noRecords: { en: 'No records', ar: 'لا توجد سجلات' },
   admin: { en: 'Admin', ar: 'مدير' },
   user: { en: 'User', ar: 'مستخدم' },
+  guard: { en: 'Guard', ar: 'حارس' },
   fullName: { en: 'Full name', ar: 'الاسم الكامل' },
   username: { en: 'Username', ar: 'اسم المستخدم' },
   password: { en: 'Password', ar: 'كلمة المرور' },

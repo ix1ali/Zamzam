@@ -77,7 +77,7 @@ export interface User {
   username: string;
   password: string;
   name: string;
-  role: 'admin' | 'user';
+  role: 'admin' | 'user' | 'guard';
   createdAt: string;
 }
 

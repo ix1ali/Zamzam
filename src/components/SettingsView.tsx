@@ -269,7 +269,7 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
                   <div>
                     <div style={{ fontWeight: 600, fontSize: '13px' }}>{u.name}</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
-                      {u.username} — <span style={{ color: u.role === 'admin' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: u.role === 'admin' ? 600 : 400 }}>{u.role === 'admin' ? t('admin', lang) : t('user', lang)}</span>
+                      {u.username} — <span style={{ color: u.role === 'admin' ? 'var(--primary)' : u.role === 'guard' ? 'var(--warning)' : 'var(--text-muted)', fontWeight: u.role === 'admin' ? 600 : 400 }}>{u.role === 'admin' ? t('admin', lang) : u.role === 'guard' ? t('guard', lang) : t('user', lang)}</span>
                     </div>
                   </div>
                 </div>
@@ -396,7 +396,7 @@ function AddUserForm({ lang, onSave, onCancel }: { lang: Lang; onSave: (u: User)
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState<'admin' | 'user'>('user');
+  const [role, setRole] = useState<'admin' | 'user' | 'guard'>('user');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -430,9 +430,10 @@ function AddUserForm({ lang, onSave, onCancel }: { lang: Lang; onSave: (u: User)
             <input style={{ ...inputStyle, direction: 'ltr' }} value={username} onChange={e => setUsername(e.target.value)} required placeholder={t('username', lang)} />
             <input style={{ ...inputStyle, direction: 'ltr' }} type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder={t('password', lang)} />
           </div>
-          <select style={inputStyle} value={role} onChange={e => setRole(e.target.value as 'admin' | 'user')}>
+          <select style={inputStyle} value={role} onChange={e => setRole(e.target.value as 'admin' | 'user' | 'guard')}>
             <option value="user">{t('user', lang)}</option>
             <option value="admin">{t('admin', lang)}</option>
+            <option value="guard">{t('guard', lang)}</option>
           </select>
           <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <button type="submit" style={{

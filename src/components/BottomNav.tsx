@@ -10,8 +10,9 @@ const tabs: { id: TabId; labelKey: string; icon: string }[] = [
   { id: 'settings', labelKey: 'navSettings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
 ];
 
-export default function BottomNav({ active, onChange }: { active: TabId; onChange: (tab: TabId) => void }) {
+export default function BottomNav({ active, onChange, userRole, onLogout }: { active: TabId; onChange: (tab: TabId) => void; userRole?: string; onLogout?: () => void }) {
   const lang = getLang();
+  const visibleTabs = userRole === 'guard' ? tabs.filter(t => t.id === 'financial') : tabs;
   return (
     <nav className="no-print" style={{
       position: 'fixed', bottom: 0, left: 0, right: 0,
@@ -23,7 +24,19 @@ export default function BottomNav({ active, onChange }: { active: TabId; onChang
       zIndex: 50,
       paddingBottom: 'env(safe-area-inset-bottom, 0px)',
     }}>
-      {tabs.map(tab => {
+      {onLogout && (
+        <button onClick={onLogout} style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          gap: '3px', background: 'none', border: 'none', cursor: 'pointer',
+          padding: '8px 4px 10px', flex: 1, color: 'var(--text-muted)',
+        }}>
+          <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span style={{ fontSize: '10px', fontWeight: 500, lineHeight: 1 }}>{t('logout', lang)}</span>
+        </button>
+      )}
+      {visibleTabs.map(tab => {
         const isActive = active === tab.id;
         return (
           <button

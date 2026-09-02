@@ -9,11 +9,20 @@ import { showToast } from './Toast';
 
 type SubTab = 'statement' | 'receipts' | 'contracts';
 
-export default function FinancialView() {
+export default function FinancialView({ guardMode }: { guardMode?: boolean }) {
   const lang = getLang();
   const months = getMonths(lang);
 
-  const [subTab, setSubTab] = useState<SubTab>('statement');
+  const [subTab, setSubTab] = useState<SubTab>('receipts');
+
+  if (guardMode) {
+    return (
+      <div style={{ padding: '16px' }}>
+        <h1 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 12px' }}>تسجيل الدفعات</h1>
+        <ReceiptsSection lang={lang} months={months} guardMode />
+      </div>
+    );
+  }
 
   const subTabs: { id: SubTab; label: string }[] = [
     { id: 'statement', label: t('statement', lang) },
@@ -203,7 +212,7 @@ function StatementSection({ lang, months }: { lang: import('@/lib/i18n').Lang; m
 }
 
 /* ── Receipts Section ── */
-function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; months: string[] }) {
+function ReceiptsSection({ lang, months, guardMode }: { lang: import('@/lib/i18n').Lang; months: string[]; guardMode?: boolean }) {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -237,23 +246,25 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
     <div style={{ animation: 'fadeInUp 0.3s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
         <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>{months[selectedMonth]} {selectedYear}</div>
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          <button onClick={() => printMonthlyStatement(tenants, monthPayments, monthsAr[selectedMonth], selectedYear)} style={{
-            background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
-            borderRadius: '10px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
-            boxShadow: 'var(--shadow-sm)',
-          }}>{t('monthlyStatement', lang)}</button>
-          <button onClick={() => printAllReceipts(tenants, monthPayments, monthsAr[selectedMonth], selectedYear)} style={{
-            background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
-            borderRadius: '10px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
-            boxShadow: 'var(--shadow-sm)',
-          }}>طباعة جميع الوصولات</button>
-          <button onClick={() => setShowForm(true)} style={{
-            background: 'var(--gradient-primary)', color: '#fff', border: 'none',
-            borderRadius: '10px', padding: '7px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
-          }}>{t('newReceipt', lang)}</button>
-        </div>
+        {!guardMode && (
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button onClick={() => printMonthlyStatement(tenants, monthPayments, monthsAr[selectedMonth], selectedYear)} style={{
+              background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
+              borderRadius: '10px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
+              boxShadow: 'var(--shadow-sm)',
+            }}>{t('monthlyStatement', lang)}</button>
+            <button onClick={() => printAllReceipts(tenants, monthPayments, monthsAr[selectedMonth], selectedYear)} style={{
+              background: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)',
+              borderRadius: '10px', padding: '7px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600,
+              boxShadow: 'var(--shadow-sm)',
+            }}>طباعة جميع الوصولات</button>
+            <button onClick={() => setShowForm(true)} style={{
+              background: 'var(--gradient-primary)', color: '#fff', border: 'none',
+              borderRadius: '10px', padding: '7px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(30,58,95,0.25)',
+            }}>{t('newReceipt', lang)}</button>
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -301,16 +312,18 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ fontWeight: 700, color: 'var(--success)', fontSize: '13px' }}>{p.amount} {t('kwd', lang)}</span>
-                  {tenant && (
+                  {!guardMode && tenant && (
                     <button onClick={() => printReceipt(tenant, p)} style={{
                       background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
                       padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600,
                     }}>{t('print', lang)}</button>
                   )}
-                  <button onClick={() => { if (confirm('حذف هذا الوصل؟')) { deletePayment(p.id); reload(); showToast('تم حذف الوصل'); } }} style={{
-                    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
-                    padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)', fontWeight: 600,
-                  }}>{t('delete', lang)}</button>
+                  {!guardMode && (
+                    <button onClick={() => { if (confirm('حذف هذا الوصل؟')) { deletePayment(p.id); reload(); showToast('تم حذف الوصل'); } }} style={{
+                      background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
+                      padding: '4px 8px', cursor: 'pointer', fontSize: '11px', color: 'var(--danger)', fontWeight: 600,
+                    }}>{t('delete', lang)}</button>
+                  )}
                 </div>
               </div>
             );
@@ -335,7 +348,22 @@ function ReceiptsSection({ lang, months }: { lang: import('@/lib/i18n').Lang; mo
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ fontWeight: 700, color: 'var(--danger)', fontSize: '13px' }}>{tt.rentAmount} {t('kwd', lang)}</span>
-                  {tt.phone && (
+                  {guardMode && (
+                    <button onClick={() => {
+                      addPayment({
+                        id: generateId(), tenantId: tt.id, amount: tt.rentAmount,
+                        month: months[selectedMonth], year: selectedYear,
+                        date: new Date().toISOString().split('T')[0],
+                        method: 'نقدا', notes: '',
+                      });
+                      reload();
+                      showToast(`تم تسجيل دفعة ${tt.name}`);
+                    }} style={{
+                      background: 'var(--success)', border: 'none', borderRadius: '8px',
+                      padding: '5px 12px', fontSize: '12px', color: '#fff', cursor: 'pointer', fontWeight: 700,
+                    }}>تم الدفع</button>
+                  )}
+                  {!guardMode && tt.phone && (
                     <a href={`https://wa.me/965${tt.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`السلام عليكم ${tt.name}،\nهذا تذكير بدفع إيجار شقة ${apt?.number || ''} بمبلغ ${tt.rentAmount} د.ك عن شهر ${months[selectedMonth]} ${selectedYear}.\nشكراً لتعاونكم.`)}`} target="_blank" rel="noopener noreferrer" style={{
                       background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px',
                       padding: '4px 8px', fontSize: '11px', color: 'var(--success)', textDecoration: 'none', fontWeight: 600,

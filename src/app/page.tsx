@@ -64,15 +64,18 @@ export default function Home() {
     return <LoginScreen onLogin={(u) => setUser(u)} />;
   }
 
+  const isGuard = user.role === 'guard';
+
   return (
     <>
       <main style={{ flex: 1, paddingBottom: '72px' }}>
-        {activeTab === 'dashboard' && <Dashboard onNavigate={setActiveTab} />}
-        {activeTab === 'apartments' && <ApartmentsView />}
-        {activeTab === 'financial' && <FinancialView />}
-        {activeTab === 'settings' && <SettingsView onLogout={() => setUser(null)} />}
+        {activeTab === 'dashboard' && !isGuard && <Dashboard onNavigate={setActiveTab} />}
+        {activeTab === 'apartments' && !isGuard && <ApartmentsView />}
+        {activeTab === 'financial' && <FinancialView guardMode={isGuard} />}
+        {activeTab === 'settings' && !isGuard && <SettingsView onLogout={() => setUser(null)} />}
+        {activeTab === 'dashboard' && isGuard && <FinancialView guardMode={isGuard} />}
       </main>
-      <BottomNav active={activeTab} onChange={setActiveTab} />
+      <BottomNav active={activeTab} onChange={setActiveTab} userRole={user.role} onLogout={isGuard ? () => setUser(null) : undefined} />
       <ToastContainer />
     </>
   );

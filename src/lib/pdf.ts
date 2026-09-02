@@ -654,8 +654,8 @@ export function printAllReceipts(
   const pages: string[] = [];
   for (let i = 0; i < allReceipts.length; i += 2) {
     const r1 = allReceipts[i];
-    const r2 = allReceipts[i + 1] || '<div class="receipt empty"></div>';
-    pages.push(`<div class="page">${r1}<div class="divider"></div>${r2}</div>`);
+    const r2 = allReceipts[i + 1] || '<div class="half empty"></div>';
+    pages.push(`<div class="page"><div class="half top">${r1}</div><div class="cut-line"></div><div class="half bottom">${r2}</div></div>`);
   }
 
   const w = window.open('', '_blank', 'width=800,height=1100');
@@ -664,13 +664,16 @@ export function printAllReceipts(
 <title>جميع الوصولات - ${month} ${year}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4; margin: 0; }
   body { font-family: 'Traditional Arabic', 'Simplified Arabic', 'Segoe UI', Arial, sans-serif; color: #555; direction: rtl; font-size: 12px; }
-  .page { width: 100%; }
-  .receipt { padding: 10px 20px; box-sizing: border-box; }
-  .divider { border-top: 1px dashed #bbb; margin: 12mm 0; }
+  .page { width: 210mm; height: 297mm; position: relative; display: flex; flex-direction: column; }
+  .half { height: 148.5mm; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .half .receipt { width: 100%; padding: 8mm 15mm; }
+  .cut-line { width: 100%; border-top: 1px dashed #bbb; position: relative; }
+  .cut-line::before { content: '✂'; position: absolute; right: 2mm; top: -8px; font-size: 14px; color: #bbb; }
   table { width: 100%; border-collapse: collapse; }
   .header-table td { border: none; padding: 2px 6px; }
-  .main-table td, .main-table th { border: 1px solid #999; padding: 3px 6px; vertical-align: middle; }
+  .main-table td, .main-table th { border: 1px solid #999; padding: 4px 8px; vertical-align: middle; }
   .lbl { font-weight: 700; white-space: nowrap; width: 1%; font-size: 11px; }
   .val { min-width: 60px; }
   .amount-box { border: 1px solid #999; padding: 2px 8px; display: inline-block; min-width: 40px; text-align: center; font-weight: 700; font-size: 12px; }
@@ -678,7 +681,6 @@ export function printAllReceipts(
     body { padding: 0; margin: 0; }
     .page { page-break-after: always; }
     .page:last-child { page-break-after: avoid; }
-    @page { size: A4; margin: 10mm; }
   }
 </style></head><body>
 ${pages.join('')}
