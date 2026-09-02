@@ -1,5 +1,6 @@
 import { Tenant, Payment, Apartment, Expense, Eviction, AuditLog, User } from './types';
 import { initialTenants, initialApartments } from './data';
+import { supabase, toSnake, toCamel } from './supabase';
 
 const TENANTS_KEY = 'zamzam_tenants';
 const PAYMENTS_KEY = 'zamzam_payments';
@@ -9,6 +10,7 @@ const EVICTIONS_KEY = 'zamzam_evictions';
 const AUDIT_LOG_KEY = 'zamzam_audit_log';
 const USERS_KEY = 'zamzam_users';
 const CURRENT_USER_KEY = 'zamzam_current_user';
+const SYNCED_KEY = 'zamzam_synced';
 
 function isBrowser() {
   return typeof window !== 'undefined';
@@ -18,27 +20,100 @@ export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
+// ── Supabase sync ──
+
+async function dbFetch<T>(table: string): Promise<T[]> {
+  const { data, error } = await supabase.from(table).select('*');
+  if (error) { console.error(`DB fetch ${table}:`, error); return []; }
+  return (data || []).map(row => toCamel<T>(row as Record<string, unknown>));
+}
+
+async function dbUpsert(table: string, item: Record<string, unknown>) {
+  const row = toSnake(item);
+  const { error } = await supabase.from(table).upsert(row, { onConflict: 'id' });
+  if (error) console.error(`DB upsert ${table}:`, error);
+}
+
+async function dbDelete(table: string, id: string) {
+  const { error } = await supabase.from(table).delete().eq('id', id);
+  if (error) console.error(`DB delete ${table}:`, error);
+}
+
+async function dbBulkInsert(table: string, items: Record<string, unknown>[]) {
+  const rows = items.map(toSnake);
+  const { error } = await supabase.from(table).upsert(rows, { onConflict: 'id' });
+  if (error) console.error(`DB bulk insert ${table}:`, error);
+}
+
+export async function syncFromSupabase(): Promise<void> {
+  if (!isBrowser()) return;
+
+  try {
+    const [tenants, apartments, payments, expenses, evictions, users, logs] = await Promise.all([
+      dbFetch<Tenant>('tenants'),
+      dbFetch<Apartment>('apartments'),
+      dbFetch<Payment>('payments'),
+      dbFetch<Expense>('expenses'),
+      dbFetch<Eviction>('evictions'),
+      dbFetch<User>('users'),
+      dbFetch<AuditLog>('audit_log'),
+    ]);
+
+    if (apartments.length === 0) {
+      await seedInitialData();
+      return;
+    }
+
+    localStorage.setItem(TENANTS_KEY, JSON.stringify(tenants));
+    localStorage.setItem(APARTMENTS_KEY, JSON.stringify(apartments.map(a => ({
+      ...a, notes: a.notes || '', flagged: a.flagged ?? false, flagReason: a.flagReason || '',
+    }))));
+    localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments));
+    localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+    localStorage.setItem(EVICTIONS_KEY, JSON.stringify(evictions));
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify(logs));
+    localStorage.setItem(SYNCED_KEY, 'true');
+  } catch (err) {
+    console.error('Sync from Supabase failed:', err);
+  }
+}
+
+async function seedInitialData() {
+  await dbBulkInsert('apartments', initialApartments as unknown as Record<string, unknown>[]);
+  await dbBulkInsert('tenants', initialTenants as unknown as Record<string, unknown>[]);
+
+  localStorage.setItem(APARTMENTS_KEY, JSON.stringify(initialApartments.map(a => ({
+    ...a, notes: a.notes || '', flagged: a.flagged ?? false, flagReason: a.flagReason || '',
+  }))));
+  localStorage.setItem(TENANTS_KEY, JSON.stringify(initialTenants));
+  localStorage.setItem(PAYMENTS_KEY, JSON.stringify([]));
+  localStorage.setItem(EXPENSES_KEY, JSON.stringify([]));
+  localStorage.setItem(EVICTIONS_KEY, JSON.stringify([]));
+  localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify([]));
+  localStorage.setItem(SYNCED_KEY, 'true');
+}
+
 // ── Tenants ──
 
 export function getTenants(): Tenant[] {
   if (!isBrowser()) return [];
   const data = localStorage.getItem(TENANTS_KEY);
-  if (!data) {
-    localStorage.setItem(TENANTS_KEY, JSON.stringify(initialTenants));
-    return initialTenants;
-  }
+  if (!data) return [];
   return JSON.parse(data);
 }
 
 export function saveTenants(tenants: Tenant[]) {
   if (!isBrowser()) return;
   localStorage.setItem(TENANTS_KEY, JSON.stringify(tenants));
+  dbBulkInsert('tenants', tenants as unknown as Record<string, unknown>[]);
 }
 
 export function addTenant(tenant: Tenant) {
   const tenants = getTenants();
   tenants.push(tenant);
-  saveTenants(tenants);
+  localStorage.setItem(TENANTS_KEY, JSON.stringify(tenants));
+  dbUpsert('tenants', tenant as unknown as Record<string, unknown>);
   const apartments = getApartments();
   const apt = apartments.find(a => a.id === tenant.apartmentId);
   if (apt) {
@@ -56,7 +131,8 @@ export function updateTenant(updated: Tenant) {
   if (idx !== -1) {
     const oldAptId = tenants[idx].apartmentId;
     tenants[idx] = updated;
-    saveTenants(tenants);
+    localStorage.setItem(TENANTS_KEY, JSON.stringify(tenants));
+    dbUpsert('tenants', updated as unknown as Record<string, unknown>);
     if (oldAptId !== updated.apartmentId) {
       const apartments = getApartments();
       const oldApt = apartments.find(a => a.id === oldAptId);
@@ -89,7 +165,8 @@ export function deleteTenant(id: string) {
     saveApartments(apartments);
     logAction('delete', 'tenant', id, `Deleted tenant: ${tenant.name}`);
   }
-  saveTenants(tenants.filter(t => t.id !== id));
+  localStorage.setItem(TENANTS_KEY, JSON.stringify(tenants.filter(t => t.id !== id)));
+  dbDelete('tenants', id);
 }
 
 // ── Payments ──
@@ -97,10 +174,7 @@ export function deleteTenant(id: string) {
 export function getPayments(): Payment[] {
   if (!isBrowser()) return [];
   const data = localStorage.getItem(PAYMENTS_KEY);
-  if (!data) {
-    localStorage.setItem(PAYMENTS_KEY, JSON.stringify([]));
-    return [];
-  }
+  if (!data) return [];
   return JSON.parse(data);
 }
 
@@ -112,13 +186,15 @@ export function savePayments(payments: Payment[]) {
 export function addPayment(payment: Payment) {
   const payments = getPayments();
   payments.push(payment);
-  savePayments(payments);
+  localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments));
+  dbUpsert('payments', payment as unknown as Record<string, unknown>);
   logAction('create', 'payment', payment.id, `Payment recorded: ${payment.amount} KD for tenant ${payment.tenantId}`);
 }
 
 export function deletePayment(id: string) {
   const payments = getPayments();
-  savePayments(payments.filter(p => p.id !== id));
+  localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments.filter(p => p.id !== id)));
+  dbDelete('payments', id);
   logAction('delete', 'payment', id, `Deleted payment: ${id}`);
 }
 
@@ -127,28 +203,17 @@ export function deletePayment(id: string) {
 export function getApartments(): Apartment[] {
   if (!isBrowser()) return [];
   const data = localStorage.getItem(APARTMENTS_KEY);
-  if (!data) {
-    const withDefaults = initialApartments.map(a => ({
-      ...a,
-      notes: a.notes || '',
-      flagged: a.flagged || false,
-      flagReason: a.flagReason || '',
-    }));
-    localStorage.setItem(APARTMENTS_KEY, JSON.stringify(withDefaults));
-    return withDefaults;
-  }
+  if (!data) return [];
   const parsed = JSON.parse(data) as Apartment[];
   return parsed.map(a => ({
-    ...a,
-    notes: a.notes || '',
-    flagged: a.flagged ?? false,
-    flagReason: a.flagReason || '',
+    ...a, notes: a.notes || '', flagged: a.flagged ?? false, flagReason: a.flagReason || '',
   }));
 }
 
 export function saveApartments(apartments: Apartment[]) {
   if (!isBrowser()) return;
   localStorage.setItem(APARTMENTS_KEY, JSON.stringify(apartments));
+  dbBulkInsert('apartments', apartments as unknown as Record<string, unknown>[]);
 }
 
 export function updateApartment(updated: Apartment) {
@@ -156,7 +221,8 @@ export function updateApartment(updated: Apartment) {
   const idx = apartments.findIndex(a => a.id === updated.id);
   if (idx !== -1) {
     apartments[idx] = updated;
-    saveApartments(apartments);
+    localStorage.setItem(APARTMENTS_KEY, JSON.stringify(apartments));
+    dbUpsert('apartments', updated as unknown as Record<string, unknown>);
     logAction('update', 'apartment', updated.id, `Updated apartment: ${updated.number}`);
   }
 }
@@ -164,7 +230,8 @@ export function updateApartment(updated: Apartment) {
 export function addApartment(apt: Apartment) {
   const apartments = getApartments();
   apartments.push(apt);
-  saveApartments(apartments);
+  localStorage.setItem(APARTMENTS_KEY, JSON.stringify(apartments));
+  dbUpsert('apartments', apt as unknown as Record<string, unknown>);
   logAction('create', 'apartment', apt.id, `Added apartment: ${apt.number} (${apt.floor})`);
 }
 
@@ -172,7 +239,8 @@ export function deleteApartment(id: string) {
   const apartments = getApartments();
   const apt = apartments.find(a => a.id === id);
   if (apt && apt.status === 'occupied') return false;
-  saveApartments(apartments.filter(a => a.id !== id));
+  localStorage.setItem(APARTMENTS_KEY, JSON.stringify(apartments.filter(a => a.id !== id)));
+  dbDelete('apartments', id);
   if (apt) logAction('delete', 'apartment', id, `Deleted apartment: ${apt.number}`);
   return true;
 }
@@ -194,7 +262,8 @@ export function saveExpenses(expenses: Expense[]) {
 export function addExpense(expense: Expense) {
   const expenses = getExpenses();
   expenses.push(expense);
-  saveExpenses(expenses);
+  localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+  dbUpsert('expenses', expense as unknown as Record<string, unknown>);
   logAction('create', 'expense', expense.id, `Added expense: ${expense.description} - ${expense.amount} KD`);
 }
 
@@ -203,14 +272,16 @@ export function updateExpense(updated: Expense) {
   const idx = expenses.findIndex(e => e.id === updated.id);
   if (idx !== -1) {
     expenses[idx] = updated;
-    saveExpenses(expenses);
+    localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+    dbUpsert('expenses', updated as unknown as Record<string, unknown>);
     logAction('update', 'expense', updated.id, `Updated expense: ${updated.description}`);
   }
 }
 
 export function deleteExpense(id: string) {
   const expenses = getExpenses();
-  saveExpenses(expenses.filter(e => e.id !== id));
+  localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses.filter(e => e.id !== id)));
+  dbDelete('expenses', id);
   logAction('delete', 'expense', id, `Deleted expense: ${id}`);
 }
 
@@ -231,7 +302,8 @@ export function saveEvictions(evictions: Eviction[]) {
 export function addEviction(eviction: Eviction) {
   const evictions = getEvictions();
   evictions.push(eviction);
-  saveEvictions(evictions);
+  localStorage.setItem(EVICTIONS_KEY, JSON.stringify(evictions));
+  dbUpsert('evictions', eviction as unknown as Record<string, unknown>);
   const apartments = getApartments();
   const apt = apartments.find(a => a.id === eviction.apartmentId);
   if (apt) {
@@ -276,12 +348,14 @@ export function logAction(
   const logs = getAuditLog();
   logs.unshift(entry);
   if (logs.length > 500) logs.length = 500;
-  saveAuditLog(logs);
+  localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify(logs));
+  dbUpsert('audit_log', entry as unknown as Record<string, unknown>);
 }
 
 export function clearAuditLog() {
   if (!isBrowser()) return;
   localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify([]));
+  supabase.from('audit_log').delete().neq('id', '').then(() => {});
 }
 
 // ── Users ──
@@ -289,18 +363,7 @@ export function clearAuditLog() {
 export function getUsers(): User[] {
   if (!isBrowser()) return [];
   const data = localStorage.getItem(USERS_KEY);
-  if (!data) {
-    const defaultAdmin: User = {
-      id: 'admin1',
-      username: 'admin',
-      password: 'admin',
-      name: 'مدير النظام',
-      role: 'admin',
-      createdAt: new Date().toISOString(),
-    };
-    localStorage.setItem(USERS_KEY, JSON.stringify([defaultAdmin]));
-    return [defaultAdmin];
-  }
+  if (!data) return [];
   return JSON.parse(data);
 }
 
@@ -312,13 +375,15 @@ export function saveUsers(users: User[]) {
 export function addUser(user: User) {
   const users = getUsers();
   users.push(user);
-  saveUsers(users);
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  dbUpsert('users', user as unknown as Record<string, unknown>);
   logAction('create', 'user', user.id, `Added user: ${user.name}`);
 }
 
 export function deleteUser(id: string) {
   const users = getUsers();
-  saveUsers(users.filter(u => u.id !== id));
+  localStorage.setItem(USERS_KEY, JSON.stringify(users.filter(u => u.id !== id)));
+  dbDelete('users', id);
   logAction('delete', 'user', id, `Deleted user: ${id}`);
 }
 

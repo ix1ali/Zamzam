@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TabId, User } from '@/lib/types';
-import { getCurrentUser } from '@/lib/store';
+import { getCurrentUser, syncFromSupabase } from '@/lib/store';
 import { getLang, applyLangDir } from '@/lib/i18n';
 import BottomNav from '@/components/BottomNav';
 import Dashboard from '@/components/Dashboard';
@@ -14,21 +14,29 @@ import ToastContainer from '@/components/Toast';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [syncing, setSyncing] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     setMounted(true);
-    const saved = getCurrentUser();
-    if (saved) setUser(saved);
     const theme = localStorage.getItem('zamzam_theme');
     if (theme === 'light' || theme === 'dark') {
       document.documentElement.setAttribute('data-theme', theme);
     }
     applyLangDir(getLang());
+    syncFromSupabase().then(() => {
+      const saved = getCurrentUser();
+      if (saved) setUser(saved);
+      setSyncing(false);
+    }).catch(() => {
+      const saved = getCurrentUser();
+      if (saved) setUser(saved);
+      setSyncing(false);
+    });
   }, []);
 
-  if (!mounted) {
+  if (!mounted || syncing) {
     return (
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
