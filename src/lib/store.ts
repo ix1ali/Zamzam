@@ -389,7 +389,7 @@ export function deleteUser(id: string) {
 
 export function loginUser(username: string, password: string): User | null {
   const users = getUsers();
-  const user = users.find(u => u.username === username && u.password === password);
+  const user = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
   if (user) {
     if (isBrowser()) {
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
