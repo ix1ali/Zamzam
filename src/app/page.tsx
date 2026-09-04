@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TabId, User } from '@/lib/types';
-import { getCurrentUser, syncFromSupabase } from '@/lib/store';
+import { syncFromSupabase } from '@/lib/store';
 import { getLang, applyLangDir } from '@/lib/i18n';
 import BottomNav from '@/components/BottomNav';
 import Dashboard from '@/components/Dashboard';
@@ -18,6 +18,12 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const [user, setUser] = useState<User | null>(null);
 
+  const handleLogout = useCallback(async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    localStorage.removeItem('zamzam_current_user');
+    setUser(null);
+  }, []);
+
   useEffect(() => {
     setMounted(true);
     const theme = localStorage.getItem('zamzam_theme');
@@ -25,15 +31,23 @@ export default function Home() {
       document.documentElement.setAttribute('data-theme', theme);
     }
     applyLangDir(getLang());
-    syncFromSupabase().then(() => {
-      const saved = getCurrentUser();
-      if (saved) setUser(saved);
-      setSyncing(false);
-    }).catch(() => {
-      const saved = getCurrentUser();
-      if (saved) setUser(saved);
-      setSyncing(false);
-    });
+
+    fetch('/api/auth/session')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.user) {
+          localStorage.setItem('zamzam_current_user', JSON.stringify(data.user));
+          setUser(data.user);
+        } else {
+          localStorage.removeItem('zamzam_current_user');
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        syncFromSupabase()
+          .catch(() => {})
+          .finally(() => setSyncing(false));
+      });
   }, []);
 
   if (!mounted || syncing) {
@@ -72,10 +86,10 @@ export default function Home() {
         {activeTab === 'dashboard' && !isGuard && <Dashboard onNavigate={setActiveTab} />}
         {activeTab === 'apartments' && !isGuard && <ApartmentsView />}
         {activeTab === 'financial' && <FinancialView guardMode={isGuard} />}
-        {activeTab === 'settings' && !isGuard && <SettingsView onLogout={() => setUser(null)} />}
+        {activeTab === 'settings' && !isGuard && <SettingsView onLogout={handleLogout} />}
         {activeTab === 'dashboard' && isGuard && <FinancialView guardMode={isGuard} />}
       </main>
-      <BottomNav active={activeTab} onChange={setActiveTab} userRole={user.role} onLogout={isGuard ? () => setUser(null) : undefined} />
+      <BottomNav active={activeTab} onChange={setActiveTab} userRole={user.role} onLogout={isGuard ? handleLogout : undefined} />
       <ToastContainer />
     </>
   );

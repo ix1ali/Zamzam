@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { loginUser } from '@/lib/store';
 import { User } from '@/lib/types';
 import { getLang, t } from '@/lib/i18n';
 
@@ -12,18 +11,28 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: User) => void
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      const user = loginUser(username, password);
-      if (user) {
-        onLogin(user);
+    setError('');
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      if (res.ok && data.user) {
+        localStorage.setItem('zamzam_current_user', JSON.stringify(data.user));
+        onLogin(data.user);
       } else {
-        setError(t('invalidCredentials', lang));
+        setError(data.error || t('invalidCredentials', lang));
         setLoading(false);
       }
-    }, 400);
+    } catch {
+      setError(t('invalidCredentials', lang));
+      setLoading(false);
+    }
   };
 
   return (

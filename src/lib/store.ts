@@ -8,7 +8,6 @@ const APARTMENTS_KEY = 'zamzam_apartments';
 const EXPENSES_KEY = 'zamzam_expenses';
 const EVICTIONS_KEY = 'zamzam_evictions';
 const AUDIT_LOG_KEY = 'zamzam_audit_log';
-const USERS_KEY = 'zamzam_users';
 const CURRENT_USER_KEY = 'zamzam_current_user';
 const SYNCED_KEY = 'zamzam_synced';
 
@@ -49,13 +48,12 @@ export async function syncFromSupabase(): Promise<void> {
   if (!isBrowser()) return;
 
   try {
-    const [tenants, apartments, payments, expenses, evictions, users, logs] = await Promise.all([
+    const [tenants, apartments, payments, expenses, evictions, logs] = await Promise.all([
       dbFetch<Tenant>('tenants'),
       dbFetch<Apartment>('apartments'),
       dbFetch<Payment>('payments'),
       dbFetch<Expense>('expenses'),
       dbFetch<Eviction>('evictions'),
-      dbFetch<User>('users'),
       dbFetch<AuditLog>('audit_log'),
     ]);
 
@@ -71,7 +69,6 @@ export async function syncFromSupabase(): Promise<void> {
     localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments));
     localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
     localStorage.setItem(EVICTIONS_KEY, JSON.stringify(evictions));
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
     localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify(logs));
     localStorage.setItem(SYNCED_KEY, 'true');
   } catch (err) {
@@ -358,56 +355,42 @@ export function clearAuditLog() {
   supabase.from('audit_log').delete().neq('id', '').then(() => {});
 }
 
-// ── Users ──
+// ── Users (managed via API routes, not client-side Supabase) ──
 
-export function getUsers(): User[] {
+export async function fetchUsers(): Promise<User[]> {
   if (!isBrowser()) return [];
-  const data = localStorage.getItem(USERS_KEY);
-  if (!data) return [];
-  return JSON.parse(data);
+  try {
+    const res = await fetch('/api/auth/users');
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.users || [];
+  } catch { return []; }
 }
 
-export function saveUsers(users: User[]) {
-  if (!isBrowser()) return;
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-
-export function addUser(user: User) {
-  const users = getUsers();
-  users.push(user);
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  dbUpsert('users', user as unknown as Record<string, unknown>);
-  logAction('create', 'user', user.id, `Added user: ${user.name}`);
-}
-
-export function deleteUser(id: string) {
-  const users = getUsers();
-  localStorage.setItem(USERS_KEY, JSON.stringify(users.filter(u => u.id !== id)));
-  dbDelete('users', id);
-  logAction('delete', 'user', id, `Deleted user: ${id}`);
-}
-
-export function loginUser(username: string, password: string): User | null {
-  const users = getUsers();
-  const user = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
-  if (user) {
-    if (isBrowser()) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+export async function addUserApi(user: User): Promise<boolean> {
+  try {
+    const res = await fetch('/api/auth/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...user, created_at: user.createdAt }),
+    });
+    if (res.ok) {
+      logAction('create', 'user', user.id, `Added user: ${user.name}`);
+      return true;
     }
-    logAction('login', 'system', user.id, `User logged in: ${user.name}`);
-    return user;
-  }
-  return null;
+    return false;
+  } catch { return false; }
 }
 
-export function logoutUser() {
-  const user = getCurrentUser();
-  if (user) {
-    logAction('logout', 'system', user.id, `User logged out: ${user.name}`);
-  }
-  if (isBrowser()) {
-    localStorage.removeItem(CURRENT_USER_KEY);
-  }
+export async function deleteUserApi(id: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/auth/users?id=${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      logAction('delete', 'user', id, `Deleted user: ${id}`);
+      return true;
+    }
+    return false;
+  } catch { return false; }
 }
 
 export function getCurrentUser(): User | null {

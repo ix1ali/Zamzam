@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { AuditLog, User } from '@/lib/types';
-import { getAuditLog, clearAuditLog, getUsers, addUser, deleteUser, getCurrentUser, logoutUser, generateId, getTenants, getApartments, getPayments, getExpenses, getEvictions } from '@/lib/store';
+import { getAuditLog, clearAuditLog, fetchUsers, addUserApi, deleteUserApi, getCurrentUser, generateId, getTenants, getApartments, getPayments, getExpenses, getEvictions } from '@/lib/store';
 import { getLang, t, type Lang } from '@/lib/i18n';
 import { showToast } from './Toast';
 
@@ -19,8 +19,8 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
 
   const reload = useCallback(() => {
     setAuditLog(getAuditLog());
-    setUsers(getUsers());
     setCurrentUser(getCurrentUser());
+    fetchUsers().then(setUsers);
   }, []);
 
   useEffect(() => {
@@ -40,13 +40,13 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
     }
   };
 
-  const handleLogout = () => { logoutUser(); onLogout(); };
+  const handleLogout = () => { onLogout(); };
 
   const handleExportData = () => {
     const data = {
       tenants: getTenants(), apartments: getApartments(), payments: getPayments(),
       expenses: getExpenses(), evictions: getEvictions(), auditLog: getAuditLog(),
-      users: getUsers(), exportDate: new Date().toISOString(),
+      users, exportDate: new Date().toISOString(),
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -73,7 +73,6 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
           if (data.payments) localStorage.setItem('zamzam_payments', JSON.stringify(data.payments));
           if (data.expenses) localStorage.setItem('zamzam_expenses', JSON.stringify(data.expenses));
           if (data.evictions) localStorage.setItem('zamzam_evictions', JSON.stringify(data.evictions));
-          if (data.users) localStorage.setItem('zamzam_users', JSON.stringify(data.users));
           showToast(t('dataImported', lang));
           setTimeout(() => window.location.reload(), 1000);
         } catch {
@@ -274,7 +273,7 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
                   </div>
                 </div>
                 {u.id !== currentUser?.id && u.id !== 'admin1' && (
-                  <button onClick={() => { if (confirm(`حذف المستخدم ${u.name}؟`)) { deleteUser(u.id); reload(); showToast('تم حذف المستخدم'); } }} style={{
+                  <button onClick={async () => { if (confirm(`حذف المستخدم ${u.name}؟`)) { await deleteUserApi(u.id); reload(); showToast('تم حذف المستخدم'); } }} style={{
                     background: 'var(--danger-light)', border: '1px solid var(--danger)', borderRadius: '8px',
                     padding: '5px 10px', fontSize: '11px', color: 'var(--danger)', cursor: 'pointer', fontWeight: 600,
                   }}>{t('delete', lang)}</button>
@@ -285,7 +284,7 @@ export default function SettingsView({ onLogout }: { onLogout: () => void }) {
 
           {showAddUser && (
             <AddUserForm lang={lang}
-              onSave={(u) => { addUser(u); setShowAddUser(false); reload(); }}
+              onSave={async (u) => { await addUserApi(u); setShowAddUser(false); reload(); }}
               onCancel={() => setShowAddUser(false)}
             />
           )}
